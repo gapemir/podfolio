@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main panel</title>
+    <link rel="stylesheet" href="./css/gn.css">
+    <link rel="stylesheet" href="./css/mainPanel.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <script src="./gn.js"></script>
+    <script src="./File.js"></script>
+</head>
+
+<body>
+    <header>
+        <div>Welcome to Podfolio</div>
+        <div id="headerDummy"></div>
+        <div id="headerUser"><i id="headerUserUser" class="fa-solid fa-user"></i></div>
+        <div id="userPopup" style="display:none;">
+            <div id="userSettings">settings</div>
+            <div id="logoutButton">logout</div>
+        </div>
+    </header>
+    <div id="fileList">
+        <div class="fileTile" id="fileForm">
+            <div class="fileHead">Actions</div>
+            <div class="fileCont">
+                Upload a file
+                <input type="file" id="fileInput" name="fileInput">
+                Rename file (optional):
+                <input type="text" id="fileName" name="fileName" placeholder="whitout file extension">
+                <button id="uploadButton">Upload</button>
+                <br>
+                <input id="folderNameInput" type="text" placeholder="name of new folder"><button id="newFolderButton">New folder</button>
+            </div>
+        </div>
+    </div>
+    <!--<div class="fileCont" id="fileMenu">
+        <div>
+            <input type="checkbox" id="publicCheck">
+            Public
+        </div>
+        <div>
+            <input type="checkbox" id="advertizeCheck">
+            Advertize
+        </div>
+        <button id="deleteButton">Delete</button>
+    </div>-->
+    <iframe id="download_iframe" style="display:none;"></iframe><!--for downloading-->
+</body>
+<script>
+    if(document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid')) == undefined || document.cookie.split(';').find(cookie => cookie.includes('podfolioToken')) == undefined)
+        window.location.href = './'
+    let tmpuserid = document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid')).split('=')[1];
+    let tmptoken = document.cookie.split(';').find(cookie => cookie.includes('podfolioToken')).split('=')[1];
+    fetch('./php/user/verify.php', {
+        method: 'POST',
+        body: JSON.stringify({
+            userid: tmpuserid,
+            token: tmptoken
+        })
+    }).then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.status === 1) {
+                console.log("user is verified");
+            }
+            else {
+                console.log("user is not verified");
+                window.location.href = './index.html';
+            }
+        });
+</script>
+<script src="./testmainPanel.js"></script>
+<script>
+/*
+class Person extends gn.lang.Object{
+    constructor(name) {
+        super();
+        this.name = name;
+        console.log(`${this.name} created.`);
+    }
+
+    meetPerson(anotherPerson) {
+        console.log(`${this.name} is meeting ${anotherPerson.name}.`);
+        // When person A meets person B, person A wants to know when B is sad.
+        // Person A adds a listener *to person B* using the central event bus.
+        // The listener function is personA.reactToSadness, and the context is 'this' (which is personA).
+        anotherPerson.addEventListener('isSad', this.reactToSadness, this);
+        console.log(`${this.name} is now listening for 'isSad' events from ${anotherPerson.name}.`);
+    }
+
+    reactToSadness(sadnessLevel, sourcePerson) {
+        // 'this' inside this function will be the context provided during addEventListener (the Person instance that called meetPerson)
+        console.log(`${this.name}: Oh dear, ${sourcePerson.name} seems sad (level: ${sadnessLevel}). I should do something!`);
+        // 'this' refers to the instance of the person reacting (e.g., personA)
+        // sourcePerson refers to the instance of the person who emitted the event (e.g., personB)
+    }
+
+     isSad(sadnessLevel) {
+        console.log(`${this.name} is feeling sad (level: ${sadnessLevel}).`);
+        // Use the centralized emitter to send the 'isSad' event
+        // The source object is 'this' (the Person instance who is sad)
+        this.sendDataEvent('isSad', sadnessLevel);
+    }
+
+    // Method to stop listening
+    stopListeningToSadness(anotherPerson) {
+         console.log(`${this.name} stops listening for 'isSad' events from ${anotherPerson.name}.`);
+         anotherPerson.removeEventListener('isSad', this.reactToSadness, this);
+    }
+}
+
+const alice = new Person('Alice');
+const bob = new Person('Bob');
+const charlie = new Person('Charlie');
+
+
+console.log("\nAlice meets Bob:");
+alice.meetPerson(bob); // Alice starts listening to Bob's 'isSad' event, with Alice as context
+
+console.log("\nBob is sad:");
+bob.isSad(5); // Bob emits the 'isSad' event. Alice's listener should fire with Alice's context.
+
+console.log("\nCharlie meets Bob:");
+charlie.meetPerson(bob); // Charlie also starts listening to Bob, with Charlie as context
+
+console.log("\nBob is sad again:");
+bob.isSad(8); // Bob emits again. Both Alice's and Charlie's listeners should fire, each with their own context.
+
+console.log("\nAlice is sad:");
+alice.isSad(3); // Alice emits 'isSad'. No one is currently listening for 'isSad' events *from Alice*.
+
+console.log("\nAlice stops listening to Bob:");
+alice.stopListeningToSadness(bob);
+
+console.log("\nBob is sad one last time:");
+bob.isSad(2); // Bob emits. Only Charlie's listener should fire now.
+*/
+</script>
+</html>

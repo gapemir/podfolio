@@ -1,0 +1,19 @@
+RewriteEngine On
+
+Options FollowSymLinks
+
+#RewriteCond %{QUERY_STRING} !(userid=([^&]+)&key=([^&]+))
+
+
+#RewriteCond %{QUERY_STRING} userid=([^&]+)&key=([^&]+)
+#RewriteCond %{QUERY_STRING} userid=([^&]+)&key=([^&]+)
+#RewriteRule ^(.*)$ ../php/validateAccess.php?file=$1&userid=%1&key=%2 [L]
+
+
+#RewriteRule ^(.*)$ ../php/validateAccess.php?file=$1&%{QUERY_STRING} [L]
+
+RewriteRule ^([a-zA-Z0-9]+)/(.*)$ ../php/validateAccess.php?userid=$1&file=$2&%{QUERY_STRING} [L]
+
+
+
+#RewriteRule ^(.*)$ ../accessDenied.html [L]

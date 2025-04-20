@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download from Podfolio</title>
+</head>
+<body>
+    <script>
+        let url = new URL(window.location.href).searchParams;
+        if( url.has("file") && url.has("user") && url.has("name") ){
+            // maybe we should check if file is public???
+
+            /*fetch("./php/file/downloadFile.php", {
+                method:"POST",
+                body: JSON.stringify({file:file})
+            }).then(data=>data.json)
+            .then(data=>{*/
+            const link = document.createElement('a');
+            link.href = "./data/" + url.get("user") + "/" + url.get("name");
+            link.download = decodeURIComponent(url.get("name"));
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            //})
+        }else{
+            alert("something went very wrong")
+        }
+    </script>
+</body>
+</html>

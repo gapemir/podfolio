@@ -1,0 +1,9 @@
+user has
+    files -> upload, delete, public, advertize(yes but no main page)
+    folders -> new, delete??, public makes children all public,
+
+user can share portfolio or files
+TODO public portfolio
+
+
+file download.html is unused, it requires uiserid fileid and name and it auto downloads file

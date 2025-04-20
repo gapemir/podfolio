@@ -1,0 +1,133 @@
+html{
+    scroll-behavior: smooth;
+    /*height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;*/
+}
+body{
+    height: 100dvh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /*background-color: #f5f5f5;*/
+    background-color: #333;
+}
+header{
+    height: 50px;
+    width: 100%;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    line-height: 50px;
+    font-size: 1.5em;
+    font-weight: 300;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+    display: flex;
+}
+
+#headerDummy {
+    flex-basis: 100px;
+    flex-grow: 1;
+}
+
+#headerUser{
+    flex-basis: 60px;
+    flex-grow: 0;
+}
+#headerUserUser {
+    cursor: pointer;
+}
+#userPopup {
+    background-color: #333;
+    width: 150px;
+    z-index: 99;
+    position: absolute;
+    right: 0;
+    top: 50px;
+}
+#userPopup > div {
+    font-size: 0.8em;
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+#fileList{
+    width: 100%;
+    color: #fff;
+    float: left;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+#fileForm > .fileCont{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.fileTile{
+    border: 1px solid #000;
+    height: 350px;
+    flex-basis: 350px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+}
+.fileHead{
+    background-color: #202020;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    /*display: grid;
+    grid-template-columns: [first] calc(100% - 16px) [end] 16px;*/
+    display: flex;
+    gap: 5px;
+    border-radius: 10px 10px 0 0;
+}
+.fileHead > div{
+    flex-grow: 1;
+}
+.fileHead span{
+    text-align: center;
+    cursor: pointer;
+}
+
+.fileHead i{
+    cursor: pointer;
+}
+
+.fileCont{
+    flex-grow: 1;
+    width: 100%;
+    height: 80%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fileCont img{
+    width: 100%;
+    object-fit: contain;
+    height: 100%;
+}
+.fileCont i{
+    font-size: 5em;
+    color: #fff;
+}
+.fakeTile{
+    border: 1px transparent;
+}
+
+.fileMenu{
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+}

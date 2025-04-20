@@ -1,0 +1,80 @@
+html{
+    scroll-behavior: smooth;
+    /*height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f5f5;*/
+}
+body{
+    height: 100dvh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    /*background-color: #f5f5f5;*/
+    background-color: #333;
+}
+
+#formDiv{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 20rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin: auto;
+    padding: 20px;
+}
+
+#formDiv > div {
+    width: 100%;
+}
+#formDiv > div > h3{
+    text-align: center;
+}
+
+/* Input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+#regLogin, #regButton  {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+}
+
+#regSwitch1, #regSwitch2 {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 40%;
+    margin-top: 5px;
+    text-align: center;
+}
+#regSwitch1 {
+    margin-left: 60%;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
