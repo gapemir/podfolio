@@ -175,6 +175,10 @@ function makeFileTile(file){
             contentItem = makeIcon('fa-regular fa-file-pdf');
             cont.appendChild(contentItem);
         }
+        else if(file.mimetype.includes("text")){
+            contentItem = makeIcon('fa-regular fa-file-lines');
+            cont.appendChild(contentItem);
+        }
     }
     
     if(file.folderid){

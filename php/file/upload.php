@@ -4,6 +4,7 @@
     $userid = $_POST['userid'];
     $fileName = $_POST['fileName'];
     $token = $_POST['token'];
+    $parent = $_POST['parent'];
 
 
     if(validity($userid, $token) != Ret::Ok->value) {
@@ -51,7 +52,7 @@
             $fileNameToStore = basename($target_file);
             $internalFileName = substr( hash( "sha256", $fileNameToStore ), 0, 20 );
             $mimeType = mime_content_type($target_file);
-            $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType')";
+            $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype, parent) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType', '$parent')";
             if( mysqli_execute_query($conn, $sql) ) {
                 echo json_encode( [ "status" => Ret::Ok->value, "file" => [
                     "fileid" => $internalFileName, 
@@ -60,7 +61,8 @@
                     "public" => false,
                     "advertize" => false,
                     "createdAt" => date("Y-m-d H:i:s"),
-                    "mimetype" => $mimeType
+                    "mimetype" => $mimeType,
+                    "arent" => $parent,
                     ] ] );
             } else {
                 unlink($target_file);

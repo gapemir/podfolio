@@ -10,26 +10,37 @@
         echo JSON_encode(["status" => Ret::UserTokenMissmatch->value]);
         exit();
     }
-
+    $wasFile = true;
     $target_dir = __DIR__ . "/../../data/" . $userid . "/";
     $sql = "SELECT name FROM file WHERE fileid = '$fileid' AND userid = '$userid'";
     $result = mysqli_query($conn, $sql);
     if (mysqli_num_rows($result) == 0) {
-        echo JSON_encode(["status" => Ret::FileNotExists->value]);
-        exit();
-    }
-    $row = mysqli_fetch_assoc($result);
-    $fileName = $row['name'];
+        $sql = "SELECT name FROM folder WHERE folderid = '$fileid'";
+        $result = mysqli_query($conn, $sql);
+        if (mysqli_num_rows($result) == 0){
+            echo JSON_encode(["status" => Ret::FileNotExists->value]);
+            exit();
+        }
+        $wasFile = false;
+    }else{
+        $row = mysqli_fetch_assoc($result);
+        $fileName = $row['name'];
 
-    $target_file = $target_dir . $fileName;
-    if ( !file_exists( $target_file ) ) {
-        echo json_encode( [ "status" => Ret::FileNotExists->value ] );
-        exit();
+        $target_file = $target_dir . $fileName;
+        if ( !file_exists( $target_file ) ) {
+            echo json_encode( [ "status" => Ret::FileNotExists->value ] );
+            exit();
+        }
     }
-
-    $sql = "DELETE FROM file WHERE fileid = '$fileid' AND userid = '$userid'";
+    if($wasFile){
+        $sql = "DELETE FROM file WHERE fileid = '$fileid' AND userid = '$userid'";
+    } else {
+        $sql = "DELETE FROM folder WHERE folderid = '$fileid' AND userid = '$userid'";
+    }
     if( mysqli_execute_query($conn, $sql) ) {
-        unlink($target_file);
+        if($wasFile){
+            unlink($target_file);
+        }
         echo json_encode( [ "status" => Ret::Ok->value ] );
     } else {
         echo json_encode( [ "status" => Ret::Other->value, "message" => "Failed to delete file record from database" ] );

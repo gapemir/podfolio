@@ -64,7 +64,8 @@ header{
     gap: 5px;
 }
 
-#fileForm > .fileCont{
+#fileForm > .fileCont, /*TODO remove this, in class it is opselite*/
+.fileTileFirst{
     display: flex;
     flex-direction: column;
     align-items: center;

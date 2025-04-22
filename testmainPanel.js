@@ -50,13 +50,9 @@ function rebuild(){
             document.cookie = 'podfolioToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
             window.location.href = './index.html';
         }
-        let rootmodel = new gn.model.TreeModel();
-        ROOT = new gn.ui.tile.TileContainer(null);
-        ROOT.model = rootmodel;
+        ROOT = new TileContainer(null);
         document.getElementById('fileList').appendChild(ROOT._element);
-        rootmodel.dataIdentifier = "storeId";
-        rootmodel.parentIdentifier = "parent";
-        ROOT.tileClass = File1;
+
 
         let allItems = [ ...data.folders, ...data.files ];
         allItems.forEach(el => {
@@ -69,7 +65,7 @@ function rebuild(){
             }
         });
         
-        rootmodel.setData(allItems)
+        ROOT.model.setData(allItems)
         ROOT.genFakeTileItems();
         
 
@@ -91,9 +87,9 @@ function rebuild(){
                 fl.display(document.getElementById('fileList'));
             }
         });*/
-        generateFakeTiles();
+        //generateFakeTiles();
     })
-    generateFakeTiles();
+    //generateFakeTiles();
 }
 
 function downloadFile(href, name = "download") {
@@ -106,6 +102,7 @@ function downloadFile(href, name = "download") {
 }
 rebuild()
 
+/*
 document.getElementById('uploadButton').addEventListener('click', function(event) {
     event.preventDefault();
     const fileInput = document.getElementById('fileInput').files[0];
@@ -131,7 +128,7 @@ document.getElementById('uploadButton').addEventListener('click', function(event
             /*storeFile(data.file);
             makeFileTile(data.file);
             generateFakeTiles();*/
-            let fl = new File(data.file);
+           /*let fl = new File(data.file);
             fl.store(ITEMS);
             fl.build();
             fl.addEventListener("updateTiles", generateFakeTiles);
@@ -146,4 +143,4 @@ document.getElementById('uploadButton').addEventListener('click', function(event
         console.error('Error:', error);
         alert('File upload failed');
     });
-});
+});*/

@@ -4,6 +4,7 @@
 
     $userid = $data['userid'];
     $name = $data['name'];
+    $parent = $data['parent'];
 
     if(validity($userid, $data['token']) != Ret::Ok->value) {
         echo JSON_encode(["status" => Ret::UserTokenMissmatch->value]);
@@ -14,7 +15,7 @@
     $encFolder = substr($encFolder, 0, 16);
     $encFolder = strtoupper($encFolder);
 
-    $sql = "INSERT INTO folder (folderid, userid, name) VALUES ('$encFolder', '$userid', '$name')";
+    $sql = "INSERT INTO folder (folderid, userid, name, parent) VALUES ('$encFolder', '$userid', '$name', '$parent')";
     $result = mysqli_query($conn, $sql);
     if($result) {
         echo JSON_encode(["status" => Ret::Ok->value]);
