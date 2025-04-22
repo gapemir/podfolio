@@ -103,7 +103,7 @@ function downloadFile(href, name = "download") {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
+}
 rebuild()
 
 document.getElementById('uploadButton').addEventListener('click', function(event) {

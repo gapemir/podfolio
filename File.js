@@ -235,12 +235,31 @@ class Folder extends StoreObject{
 class File1 extends gn.ui.tile.TileItem{
     constructor(data, parent) {
         super(data, parent)
-
         //this._element._storeid = this._storeid;
     
         //head
         this._head = new gn.ui.basic.Widget("div", "fileHead");
         this.add(this._head);
+
+        let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
+        download.tooltip = "Download";
+        download.addEventListener("click", function(){
+            downloadFile("./data/" + userid + "/" + this._data.storeId + "?key=" + this._data.fileKey, this._data.name);
+        }, this);
+        this._head.add(download);
+        let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
+        share.tooltip = "Share";
+        share.addEventListener("click", function(){
+            let link = /.*\//.exec(window.location)[0];
+            //navigator.clipboard.writeText(link + "download.html?user="+userid+"&file="+file.fileid+"&name="+encodeURIComponent(file.name));
+            //navigator.clipboard.writeText(link + "data/"+userid+"/"+file.fileid+"?key="+file.fileKey)
+            let name = encodeURI(this._data.name).replaceAll("%20", "+");
+            if(name.includes("%")){
+                name = this._data.storeId;
+            }
+            navigator.clipboard.writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
+        }, this);
+        this._head.add(share);
 
         let headTextDiv = new gn.ui.basic.Widget("div");
         headTextDiv.setStyle("textIndent", "16px");
