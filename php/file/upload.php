@@ -53,6 +53,9 @@
             $internalFileName = substr( hash( "sha256", $fileNameToStore ), 0, 20 );
             $mimeType = mime_content_type($target_file);
             $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype, parent) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType', '$parent')";
+            if($parent == "null"){
+                $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType')";
+            }
             if( mysqli_execute_query($conn, $sql) ) {
                 echo json_encode( [ "status" => Ret::Ok->value, "file" => [
                     "fileid" => $internalFileName, 

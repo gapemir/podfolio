@@ -284,7 +284,12 @@ class TileContainer extends gn.ui.tile.TileContainer{
             this.remove(this._fakeTiles[i]);
         };
         this._fakeTiles = [];
-        var perLine = Math.floor(this.element.clientWidth / parseInt(getComputedStyle(this._idElementMap.entries().next().value[1].element).flexBasis));
+        var perLine
+        if(this._idElementMap.size == 0){
+            perLine = 4;
+        }else{
+            perLine = Math.floor(this.element.clientWidth / parseInt(getComputedStyle(this._idElementMap.entries().next().value[1].element).flexBasis));
+        }
         var n = this._groups.get(this._currentGroup).length + 1 % perLine; // +1 is static el
         if(n == 0){
             n = perLine;
