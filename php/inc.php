@@ -1,5 +1,6 @@
 <?php
-    $conn = mysqli_connect("localhost", "root", "", "podfolio");
+    require_once("env.php");
+    $conn = mysqli_connect($host, $user, $password, $db, $port);
 
     enum Ret : int{
         case Ok = 1;
