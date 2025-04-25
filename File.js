@@ -13,33 +13,31 @@ class TileContainer extends gn.ui.tile.TileContainer{
         let head = new gn.ui.basic.Widget("div", "fileHead");
         head.add(new gn.ui.basic.Label("Actions"));
         this._firstItem.add(head);
-        let cont =  new gn.ui.basic.Widget("div", "fileCont fileTileFirst");
+
+        let cont = new gn.ui.container.Column("fileCont fileTileFirst");
         cont.add(new gn.ui.basic.Label("Upload a file"))
         this._firstItem.fileInput = document.createElement("input");
         this._firstItem.fileInput.type = "file";
-        cont.element.appendChild(this._firstItem.fileInput);
+        cont.addNativeElement(this._firstItem.fileInput);
         cont.add(new gn.ui.basic.Label("Rename file (optional):"))
-        this._firstItem.nameOfFile = document.createElement("input");
-        this._firstItem.nameOfFile.type = "text";
-        this._firstItem.nameOfFile.id = "fileName";
-        this._firstItem.nameOfFile.placeholder = "whitout file extension";
-        cont.element.appendChild(this._firstItem.nameOfFile);
-        let but1 = document.createElement("button");
-        but1.innerText = "Upload";
-        but1.onclick = this._uploadFile.bind(this);
-        cont.element.appendChild(but1);
-        this._firstItem.add(cont);
-        cont.element.appendChild(document.createElement("br"));
 
-        this._firstItem.nameOfFolder = document.createElement("input");
-        this._firstItem.nameOfFolder.type = "text";
-        this._firstItem.nameOfFolder.placeholder = "name of new folder";
-        this._firstItem.nameOfFolder.id = "folderNameInput";
-        cont.element.appendChild(this._firstItem.nameOfFolder);
-        let but2 = document.createElement("button");
-        but2.innerText = "New folder";
-        but2.onclick = this._createNewFolder.bind(this);
-        cont.element.appendChild(but2);
+        this._firstItem.nameOfFile = new gn.ui.input.Line("", "file whitout extension");
+        cont.add(this._firstItem.nameOfFile);
+
+        let but1 = new gn.ui.input.Button("", "Upload");
+        but1.addEventListener("click", this._uploadFile, this);
+        cont.add(but1);
+
+        //cont.element.appendChild(document.createElement("br"));
+
+        this._firstItem.nameOfFolder = new gn.ui.input.Line("", "name of new folder");
+        cont.add(this._firstItem.nameOfFolder);
+
+        let but2 = new gn.ui.input.Button("", "New folder");
+        but2.addEventListener("click", this._createNewFolder, this);
+        cont.add(but2, but1);
+
+        this._firstItem.add(cont);
 
         this.add(this._firstItem);
     }
@@ -59,7 +57,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
         if(n == 0){
             n = perLine;
         }else{
-            n = n % perLine;
+            n = perLine - (n % perLine);
         }
         for(let i = 0; i < n; i++){
             let item = new this._fakeTileClass(this);
@@ -105,10 +103,10 @@ class TileContainer extends gn.ui.tile.TileContainer{
             } else {
                 alert('File upload failed');
             }
-        }).catch(error => {
+        })/*.catch(error => {
             console.error('Error:', error);
             alert('File upload failed');
-        });
+        });*/
     }
 
     _createNewFolder(){

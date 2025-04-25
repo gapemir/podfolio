@@ -66,7 +66,6 @@ function rebuild(){
         });
         
         ROOT.model.setData(allItems)
-        ROOT.genFakeTileItems();
         
 
         /*data.folders.forEach(folder => {
