@@ -1,3 +1,4 @@
 data/*
 !data/.htaccess
 php/env.php
+.vscode
