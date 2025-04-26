@@ -5,12 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main panel</title>
-    <link rel="stylesheet" href="./css/gn.css">
+    <link rel="stylesheet" href="./gn/css/gn.css">
     <link rel="stylesheet" href="./css/mainPanel.css">
     <link rel="stylesheet" href="./css/testmainPanel.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="./gn/gn.js"></script>
     <script src="./File.js"></script>
+    <script src="./Application.js"></script>
 </head>
 
 <body>
@@ -24,30 +25,7 @@
         </div>
     </header>
     <div id="fileList">
-        <!--<div class="fileTile" id="fileForm">
-            <div class="fileHead">Actions</div>
-            <div class="fileCont">
-                Upload a file
-                <input type="file" id="fileInput" name="fileInput">
-                Rename file (optional):
-                <input type="text" id="fileName" name="fileName" placeholder="whitout file extension">
-                <button id="uploadButton">Upload</button>
-                <br>
-                <input id="folderNameInput" type="text" placeholder="name of new folder"><button id="newFolderButton">New folder</button>
-            </div>
-        </div>-->
     </div>
-    <!--<div class="fileCont" id="fileMenu">
-        <div>
-            <input type="checkbox" id="publicCheck">
-            Public
-        </div>
-        <div>
-            <input type="checkbox" id="advertizeCheck">
-            Advertize
-        </div>
-        <button id="deleteButton">Delete</button>
-    </div>-->
     <iframe id="download_iframe" style="display:none;"></iframe><!--for downloading-->
 </body>
 <script>

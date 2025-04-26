@@ -38,8 +38,16 @@ class TileContainer extends gn.ui.tile.TileContainer{
         cont.add(but2, but1);
 
         this._firstItem.add(cont);
-
         this.add(this._firstItem);
+
+        this._breadcrumb = new gn.ui.control.Breadcrumb();
+        this._breadcrumb.model = this._model;
+        this._breadcrumb.addEventListener("back", function(){
+            if(!gn.lang.Var.isNull(this._currentGroup)){
+                this.openGroup(this._model.getParent(this._currentGroup));
+            }
+        }, this);
+        this._header.add(this._breadcrumb);
     }
 
     genFakeTileItems(){
@@ -87,19 +95,10 @@ class TileContainer extends gn.ui.tile.TileContainer{
             body: formData
         }).then(response => response.json())
         .then(data => {
-            console.log(data);
             if(data.status === 1){
-                /*storeFile(data.file);
-                makeFileTile(data.file);
-                generateFakeTiles();*/
-                /*let fl = new File(data.file);
-                fl.store(ITEMS);
-                fl.build();
-                fl.addEventListener("updateTiles", generateFakeTiles);
-                if(data.file.parent == null){
-                    fl.display(document.getElementById('fileList'));
-                }*/
-                //generateFakeTiles();
+                data.file.storeId = data.file.fileid;
+                data.file.type = gn.model.Type.item;
+                this.model.addData(data.file);
             } else {
                 alert('File upload failed');
             }
@@ -115,7 +114,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
             alert("Folder name cannot be empty");
             return;
         }
-        fetch('./php/file/createFolder.php', {
+        fetch('./php/folder/create.php', {
             method: 'POST',
             body: JSON.stringify({
                 token: document.cookie.split(';').find(cookie => cookie.includes('podfolioToken')).split('=')[1],
@@ -139,7 +138,7 @@ class File1 extends gn.ui.tile.TileItem{
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
         download.tooltip = "Download";
         download.addEventListener("click", function(){
-            downloadFile("./data/" + userid + "/" + this._data.storeId + "?key=" + this._data.fileKey, this._data.name);
+            Application.instance().downloadFile("./data/" + userid + "/" + this._data.storeId + "?key=" + this._data.fileKey, this._data.name);
         }, this);
         this._head.add(download);
         let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
@@ -152,7 +151,8 @@ class File1 extends gn.ui.tile.TileItem{
             if(name.includes("%")){
                 name = this._data.storeId;
             }
-            navigator.clipboard.writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
+            Application.instance().writeToClipboard(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey);
+            //navigator.clipboard.writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
         }, this);
         this._head.add(share);
 
@@ -218,42 +218,40 @@ class File1 extends gn.ui.tile.TileItem{
     }
     _buildMenu(){
         this._menuIsShown = false;
-        this._menu = new gn.ui.basic.Widget("div", "fileMenu fileCont");
-        
-        let div1 = new gn.ui.basic.Widget("div");
-        let inp1 = document.createElement("input");
-        inp1.type = "checkbox"
-        inp1.checked = this._data.public;
-        div1.element.appendChild(inp1);
-        //todo redo the event listener without bind and with context
-        inp1.addEventListener("click", function(){
-            //this._changeMeta("public", inp1.checked);
-            throw new TypeError("not yet imlemented");
-        }.bind(this));
+        this._menu = new gn.ui.container.Column("fileMenu fileCont");
+        let div1 = new gn.ui.container.Row();
+        let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
+        inp1.addEventListener("click", async function(){
+            if(await Application.instance().changeMeta(this._data.storeId, ["public", inp1.checked])){
+                this._data.public = inp1.checked;
+            }else{
+                console.error("Error changing meta data")
+            }
+        }, this);
+        div1.add(inp1);
         div1.add(new gn.ui.basic.Label("Public"));
         this._menu.add(div1);
-
-        let div2 = new gn.ui.basic.Widget("div");
-        let inp2 = document.createElement("input");
-        inp2.type = "checkbox"
-        inp2.checked = this._data.advertize;
-        div2.element.appendChild(inp2);
-        //todo redo the event listener
-        inp2.addEventListener("click", function(){
-            //this._changeMeta("public", inp2.checked);
-            throw new TypeError("not yet imlemented");
-        }.bind(this));
+        let div2 = new gn.ui.container.Row();
+        let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
+        inp2.addEventListener("click", async function(){
+            if(await Application.instance().changeMeta(this._data.storeId, ["advertize", inp2.checked])){
+                this._data.advertize = inp2.checked;
+            }else{
+                console.error("Error changing meta data")
+            }
+        }, this);
+        div2.add(inp2);
         div2.add(new gn.ui.basic.Label("Advertize"));
         this._menu.add(div2);
-
-        let div3 = new gn.ui.basic.Widget("div");
-        let del = document.createElement("button");
-        del.innerHTML = "Delete";
-        //todo deleting a folder deletes all files in it
-        //del.onclick = this._deleteFile.bind(this);
-        div3.element.appendChild(del);
+        let div3 = new gn.ui.container.Row();
+        let del = new gn.ui.input.Button("fileMenuButton", "Delete");
+        del.addEventListener("click", async function(){
+            if(await Application.instance().deleteFile(this._data.storeId)){
+                this._parent.model.removeData(this._data.storeId)
+            }
+        }, this);
+        div3.add(del);
         this._menu.add(div3);
-
         this._menu.setStyle("display", "none");
         this.add(this._menu);
     }
@@ -270,7 +268,7 @@ class Folder1 extends gn.ui.tile.TileSubItemContainer{
         /*let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
         download.tooltip = "Download";
         download.addEventListener("click", function(){
-            downloadFile("./data/" + userid + "/" + this._data.storeId + "?key=" + this._data.fileKey, this._data.name);
+            Application.instance().downloadFile("./data/" + userid + "/" + this._data.storeId + "?key=" + this._data.fileKey, this._data.name);
         }, this);
         this._head.add(download);*/
         let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
@@ -284,7 +282,7 @@ class Folder1 extends gn.ui.tile.TileSubItemContainer{
                 name = this._data.storeId;
             }
             throw new TypeError("not yet implemented")
-            //navigator.clipboard.writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
+            //Application.instance().writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
         }, this);
         this._head.add(share);
 
@@ -330,41 +328,30 @@ class Folder1 extends gn.ui.tile.TileSubItemContainer{
     }
     _buildMenu(){
         this._menuIsShown = false;
-        this._menu = new gn.ui.basic.Widget("div", "fileMenu fileCont");
-        
-        let div1 = new gn.ui.basic.Widget("div");
-        let inp1 = document.createElement("input");
-        inp1.type = "checkbox"
-        inp1.checked = this._data.public;
-        div1.element.appendChild(inp1);
-        //todo redo the event listener without bind and with context
+        this._menu = new gn.ui.container.Column("fileMenu fileCont");
+        let div1 = new gn.ui.container.Row();
+        let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
         inp1.addEventListener("click", function(){
-            //this._changeMeta("public", inp1.checked);
-            throw new TypeError("not yet imlemented");
-        }.bind(this));
+            this.sendDataEvent("changeMeta", {id: this._data._storeId, key: "public", value: inp1.checked});
+        }, this);
+        div1.add(inp1);
         div1.add(new gn.ui.basic.Label("Public"));
         this._menu.add(div1);
-
-        let div2 = new gn.ui.basic.Widget("div");
-        let inp2 = document.createElement("input");
-        inp2.type = "checkbox"
-        inp2.checked = this._data.advertize;
-        div2.element.appendChild(inp2);
-        //todo redo the event listener
+        let div2 = new gn.ui.container.Row();
+        let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
         inp2.addEventListener("click", function(){
-            //this._changeMeta("public", inp2.checked);
-            throw new TypeError("not yet imlemented");
-        }.bind(this));
+            this.sendDataEvent("changeMeta", {id: this._data._storeId, key: "advertize", value: inp2.checked});
+        }, this);
+        div2.add(inp2);
         div2.add(new gn.ui.basic.Label("Advertize"));
         this._menu.add(div2);
-
-        let div3 = new gn.ui.basic.Widget("div");
-        let del = document.createElement("button");
-        del.innerHTML = "Delete";
-        //del.onclick = this._deleteFile.bind(this);
-        div3.element.appendChild(del);
+        let div3 = new gn.ui.container.Row();
+        let del = new gn.ui.input.Button("fileMenuButton", "Delete");
+        del.addEventListener("click", function(){
+            this.sendDataEvent("deleteFile", this._data.storeId);
+        }, this);
+        div3.add(del);
         this._menu.add(div3);
-
         this._menu.setStyle("display", "none");
         this.add(this._menu);
     }

@@ -18,6 +18,8 @@
     if(mysqli_affected_rows($conn) == 0){
         $sql = "UPDATE folder SET " . $data["data"][0] . "=" . ($data["data"][1] ? "true" : "false") . " WHERE folderid = '" . $data["fileid"] . "';";
         $result = mysqli_query($conn, $sql);
+        //we should apply this to all files in the folder
+        //maby we should do this in a different file
     }
 
     if($result) {
