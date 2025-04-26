@@ -129,9 +129,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
 class File1 extends gn.ui.tile.TileItem{
     constructor(data, parent) {
         super(data, parent)
-        //this._element._storeid = this._storeid;
-    
-        //head
+
         this._head = new gn.ui.basic.Widget("div", "fileHead");
         this.add(this._head);
 
@@ -222,8 +220,8 @@ class File1 extends gn.ui.tile.TileItem{
         let div1 = new gn.ui.container.Row();
         let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
         inp1.addEventListener("click", async function(){
-            if(await Application.instance().changeMeta(this._data.storeId, ["public", inp1.checked])){
-                this._data.public = inp1.checked;
+            if(await Application.instance().changeFileMeta(this._data.storeId, ["public", inp1.value])){
+                this._data.public = inp1.value;
             }else{
                 console.error("Error changing meta data")
             }
@@ -234,8 +232,8 @@ class File1 extends gn.ui.tile.TileItem{
         let div2 = new gn.ui.container.Row();
         let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
         inp2.addEventListener("click", async function(){
-            if(await Application.instance().changeMeta(this._data.storeId, ["advertize", inp2.checked])){
-                this._data.advertize = inp2.checked;
+            if(await Application.instance().changeFileMeta(this._data.storeId, ["advertize", inp2.value])){
+                this._data.advertize = inp2.value;
             }else{
                 console.error("Error changing meta data")
             }
@@ -259,9 +257,7 @@ class File1 extends gn.ui.tile.TileItem{
 class Folder1 extends gn.ui.tile.TileSubItemContainer{
     constructor(data, parent) {
         super(data, parent)
-        //this._element._storeid = this._storeid;
-    
-        //head
+        
         this._head = new gn.ui.basic.Widget("div", "fileHead");
         this.add(this._head);
         //folders are not yed downloadable, we need to construct a zip file
@@ -281,10 +277,20 @@ class Folder1 extends gn.ui.tile.TileSubItemContainer{
             if(name.includes("%")){
                 name = this._data.storeId;
             }
-            throw new TypeError("not yet implemented")
-            //Application.instance().writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
+            Application.instance().writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
         }, this);
         this._head.add(share);
+
+        if(this._data.public){
+            let pub = new gn.ui.basic.Icon(14, "fa-users", ["fa-solid"]);
+            pub.setStyle("color", "green");
+            this._head.add(pub);
+        }
+        if(this._data.advertize){
+            let adv = new gn.ui.basic.Icon(14, "fa-ad", ["fa-solid"]);
+            adv.setStyle("color", "green");
+            this._head.add(adv);
+        }
 
         let headTextDiv = new gn.ui.basic.Widget("div");
         headTextDiv.setStyle("textIndent", "16px");
@@ -331,24 +337,39 @@ class Folder1 extends gn.ui.tile.TileSubItemContainer{
         this._menu = new gn.ui.container.Column("fileMenu fileCont");
         let div1 = new gn.ui.container.Row();
         let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
-        inp1.addEventListener("click", function(){
-            this.sendDataEvent("changeMeta", {id: this._data._storeId, key: "public", value: inp1.checked});
+        inp1.addEventListener("click", async function(){
+            let ret = await Application.instance().changeFolderMeta(this._data.storeId, ["public", inp1.value]);
+            if(ret){
+                this._data.public = inp1.value;
+            }else{
+                console.error("Error changing meta data")
+            }
         }, this);
         div1.add(inp1);
         div1.add(new gn.ui.basic.Label("Public"));
         this._menu.add(div1);
         let div2 = new gn.ui.container.Row();
         let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
-        inp2.addEventListener("click", function(){
-            this.sendDataEvent("changeMeta", {id: this._data._storeId, key: "advertize", value: inp2.checked});
+        inp2.addEventListener("click", async function(){
+            let ret = await Application.instance().changeFolderMeta(this._data.storeId, ["advertize", inp2.value]);
+            if(ret){
+                this._data.public = inp1.value;
+            }else{
+                console.error("Error changing meta data")
+            }
         }, this);
         div2.add(inp2);
         div2.add(new gn.ui.basic.Label("Advertize"));
         this._menu.add(div2);
         let div3 = new gn.ui.container.Row();
         let del = new gn.ui.input.Button("fileMenuButton", "Delete");
-        del.addEventListener("click", function(){
-            this.sendDataEvent("deleteFile", this._data.storeId);
+        del.addEventListener("click", async function(){
+            let res = await Application.instance().deleteFolder(this._data.storeId)
+            if(res){
+                this._parent.model.removeData(this._data.storeId)
+            }else{
+                console.error("Error deleting folder")
+            }
         }, this);
         div3.add(del);
         this._menu.add(div3);

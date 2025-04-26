@@ -34,4 +34,35 @@
             return Ret::UserTokenMissmatch->value;
         }
     }
-?>
+    function getAllChildFiles($conn, $folderid) {
+        $sql = "SELECT fileid FROM file WHERE parent = '$folderid'";
+        $result = mysqli_query($conn, $sql);
+        $children = array();
+        while ($row = mysqli_fetch_assoc($result)) {
+            $children[] = $row['fileid'];
+        }
+        $sql = "SELECT folderid FROM folder WHERE parent = '$folderid'";
+        $result = mysqli_query($conn, $sql);
+        while ($row = mysqli_fetch_assoc($result)) {
+            $children = array_merge($children, getAllChildFiles($conn, $row['folderid']));
+        }
+        return $children;
+    }
+    function getAllChildFolders($conn, $folderid) {
+        $sql = "SELECT folderid FROM folder WHERE parent = '$folderid'";
+        $result = mysqli_query($conn, $sql);
+        $children = array();
+        while ($row = mysqli_fetch_assoc($result)) {
+            $children = array_merge($children, getAllChildFolders($conn, $row['folderid']));
+            $children[] = $row['folderid'];
+        }
+        return $children;
+    }
+    function arrayToDbValueIN($conn, $items){
+        $items = array_unique($items);
+        $items = array_map(function($item) use ($conn) {
+            return mysqli_real_escape_string($conn, $item);
+        }, $items);
+        $items = implode("','", $items);
+        return $items;
+    }

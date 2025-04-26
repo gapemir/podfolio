@@ -42,7 +42,12 @@ class Application extends gn.application.Application{
         return data.status == 1;
     }
     async deleteFolder(folderId) {
-        throw new Error("Not implemented yet");
+        let data = await this._phpRequest('./php/folder/delete.php', {
+            folderid: folderId,
+            token: this.token,
+            userid: this.userId
+        });
+        return data.status == 1;
     }
     async renameFile(fileId, name) {
         throw new Error("Not implemented yet");
@@ -50,7 +55,7 @@ class Application extends gn.application.Application{
     async renameFolder(folderId, name) {
         throw new Error("Not implemented yet");
     }
-    async changeMeta(fileId, data) {
+    async changeFileMeta(fileId, data) {
         let res_data = await this._phpRequest('./php/file/changeMeta.php', {
             fileid: fileId,
             token: this.token,
@@ -59,6 +64,14 @@ class Application extends gn.application.Application{
         });
         return res_data.status == 1;
     }
-
+    async changeFolderMeta(folderId, data) {
+        let res_data = await this._phpRequest('./php/folder/changeMeta.php', {
+            folderid: folderId,
+            token: this.token,
+            userid: this.userId,
+            data: data
+        });
+        return res_data.status == 1;
+    }
 
 }

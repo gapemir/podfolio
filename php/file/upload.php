@@ -65,7 +65,7 @@
                     "advertize" => false,
                     "createdAt" => date("Y-m-d H:i:s"),
                     "mimetype" => $mimeType,
-                    "arent" => $parent,
+                    "parent" => $parent,
                     ] ] );
             } else {
                 unlink($target_file);
