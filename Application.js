@@ -1,26 +1,17 @@
-class Application extends gn.application.Application{
+class Application extends gn.app.App{
     constructor() {
         super();
-        this._userId = null;
-        this._token = null;
-    }
-    static instance() {
-        if (this._instance == null) {
-            this._instance = new Application();
-        }
-        return this._instance;
     }
     get userId() {
-        if(this._userId == null) {
-            this._userId = document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid')).split('=')[1];
+        let userId = gn.util.Cookie.get().podfolioUserid; //ither its logged in user
+        if( gn.lang.Var.isNull(userId) ){
+            userId = new URL(window.location.href).searchParams.get("user") //its user that shared its public page
         }
-        return this._userId;
+        return userId; //or its null witch means we go to first page aka advertize
     }
     get token() {
-        if(this._token == null) {
-            this._token = document.cookie.split(';').find(cookie => cookie.includes('podfolioToken')).split('=')[1];
-        }
-        return this._token;
+        let token = gn.util.Cookie.get().podfolioToken; //either its logged in user
+        return token //or its null witch means we go to either public listings or first page
     }
     downloadFile(href, name = "download") {
         const link = document.createElement('a');
@@ -33,45 +24,4 @@ class Application extends gn.application.Application{
     writeToClipboard(text) {
         navigator.clipboard.writeText(text);
     }
-    async deleteFile(fileId) {
-        let data = await this._phpRequest('./php/file/delete.php', {
-            fileid: fileId,
-            token: this.token,
-            userid: this.userId
-        });
-        return data.status == 1;
-    }
-    async deleteFolder(folderId) {
-        let data = await this._phpRequest('./php/folder/delete.php', {
-            folderid: folderId,
-            token: this.token,
-            userid: this.userId
-        });
-        return data.status == 1;
-    }
-    async renameFile(fileId, name) {
-        throw new Error("Not implemented yet");
-    }
-    async renameFolder(folderId, name) {
-        throw new Error("Not implemented yet");
-    }
-    async changeFileMeta(fileId, data) {
-        let res_data = await this._phpRequest('./php/file/changeMeta.php', {
-            fileid: fileId,
-            token: this.token,
-            userid: this.userId,
-            data: data
-        });
-        return res_data.status == 1;
-    }
-    async changeFolderMeta(folderId, data) {
-        let res_data = await this._phpRequest('./php/folder/changeMeta.php', {
-            folderid: folderId,
-            token: this.token,
-            userid: this.userId,
-            data: data
-        });
-        return res_data.status == 1;
-    }
-
 }

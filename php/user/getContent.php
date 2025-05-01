@@ -3,11 +3,13 @@
     $data = json_decode(file_get_contents("php://input"), true);
 
     $userid = $data['userid'];
-    $token = $data['token'];
-
+    if(isset($data['token'])){
+        $token = $data['token'];
+    }
+    
     $sql = "";
 
-    if(strcmp($token, "public")==0){
+    if(!isset($token)){
         $sql = "SELECT fileid, name, fileKey, public, advertize, createdAt, mimetype, parent FROM file WHERE userid = '$userid' AND public = true";
     }else{
         if( validity($userid, $token) != 1){
@@ -24,7 +26,7 @@
         $row['advertize'] = (bool)$row['advertize'];
         $files[] = $row;
     }
-    if(strcmp($token, "public")==0){
+    if(!isset($token)){
         $sql = "SELECT folderid, name, createdAt, public, advertize, parent FROM folder WHERE userid = '$userid' AND public = true";
     }else{
         $sql = "SELECT folderid, name, createdAt, public, advertize, parent FROM folder WHERE userid = '$userid'";

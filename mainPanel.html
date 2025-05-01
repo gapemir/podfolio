@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <script src="./gn/gn.js"></script>
     <script src="./File.js"></script>
+    <script src="./privateFile.js"></script>
     <script src="./Application.js"></script>
 </head>
 
@@ -26,7 +27,6 @@
     </header>
     <div id="fileList">
     </div>
-    <iframe id="download_iframe" style="display:none;"></iframe><!--for downloading-->
 </body>
 <script>
     if(document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid')) == undefined || document.cookie.split(';').find(cookie => cookie.includes('podfolioToken')) == undefined)
