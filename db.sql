@@ -13,6 +13,7 @@ CREATE TABLE user(
 CREATE TABLE folder(
     folderid VARCHAR(255) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    fileKey VARCHAR(255) NOT NULL,
     userid VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     public boolean DEFAULT false,

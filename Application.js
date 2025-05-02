@@ -1,6 +1,7 @@
 class Application extends gn.app.App{
     constructor() {
         super();
+        this.header = new Header();
     }
     get userId() {
         let userId = gn.util.Cookie.get().podfolioUserid; //ither its logged in user
@@ -23,5 +24,43 @@ class Application extends gn.app.App{
     }
     writeToClipboard(text) {
         navigator.clipboard.writeText(text);
+        //if debugger is opened and this throws error its expected behavior
+    }
+    logout() {
+        gn.util.Cookie.del("podfolioToken");
+        gn.util.Cookie.del("podfolioUserid");
+        window.location.reload();
+    }
+}
+class Header extends gn.ui.Header{
+    constructor() {
+        super({left: true, center: true, right: true});
+        this.sticky = true;
+        this.addClass("header");
+        this.left.add(new gn.ui.basic.Label("Podfolio"));
+        this.center.add(new gn.ui.basic.Label("Your personal pastebin"));
+        let user = new gn.ui.basic.Icon(30, "fa-user", ["fa-solid"])
+        user.addEventListener("click", function () {
+            let menu = new gn.ui.popup.Menu(user);
+            menu.items = [
+                {
+                    label: new gn.ui.basic.Label("Logout"),
+                    icon: new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]),
+                    action: function () {
+                        Application.instance().logout();
+                    }
+                },
+                {
+                    label: new gn.ui.basic.Label("My public page"),
+                    icon: new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]),
+                    action: function () {
+                        window.location.href = "./public.html?user=" + Application.instance().userId;
+                    }
+                },
+            ]
+            menu.show();
+        }, this);
+        this.right.add(user);
+        
     }
 }

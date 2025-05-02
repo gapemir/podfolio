@@ -55,6 +55,7 @@ class PTileContainer extends TileContainer{
             body: formData
         }).then(response => response.json())
         .then(data => {
+            console.log(data);
             if(data.status === 1){
                 data.file.storeId = data.file.fileid;
                 data.file.type = gn.model.Type.item;
@@ -152,9 +153,13 @@ class PFile extends File{
         let div3 = new gn.ui.container.Row();
         let del = new gn.ui.control.Button("fileMenuButton", "Delete");
         del.addEventListener("click", async function(){
-            if(await this._deleteFile(this._data.storeId)){
-                this._parent.model.removeData(this._data.storeId)
-            }
+            let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label("Delete file"), new gn.ui.basic.Label("Are you sure you want to delete this file?"));
+            dlg.addEventListener("yes", async function(){
+                if(await this._deleteFile(this._data.storeId)){
+                    this._parent.model.removeData(this._data.storeId)
+                }
+            }, this);
+            dlg.show();
         }, this);
         div3.add(del);
         this._menu.add(div3);
@@ -162,7 +167,7 @@ class PFile extends File{
         this.add(this._menu);
     }
     async _changeFileMeta(fileId, data) {
-        let res_data = await gn.app.App.instance().phpRequest('./php/file/changeMeta.php', {
+        let res_data = await gn.app.App.instance().phpRequestJ('./php/file/changeMeta.php', {
             fileid: fileId,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
@@ -171,7 +176,7 @@ class PFile extends File{
         return res_data.status == 1;
     }
     async _deleteFile(fileId) {
-        let data = await gn.app.App.instance().phpRequest('./php/file/delete.php', {
+        let data = await gn.app.App.instance().phpRequestJ('./php/file/delete.php', {
             fileid: fileId,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId
@@ -250,12 +255,15 @@ class PFolder extends Folder{
         let div3 = new gn.ui.container.Row();
         let del = new gn.ui.control.Button("fileMenuButton", "Delete");
         del.addEventListener("click", async function(){
-            let res = await this._deleteFolder(this._data.storeId)
-            if(res){
-                this._parent.model.removeData(this._data.storeId)
-            }else{
-                console.error("Error deleting folder")
-            }
+            let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label("Delete folder"), new gn.ui.basic.Label("Are you sure you want to delete this folder?"));
+            dlg.addEventListener("yes", async function(){
+                let res = await this._deleteFolder(this._data.storeId)
+                if(res){
+                    this._parent.model.removeData(this._data.storeId)
+                }else{
+                    console.error("Error deleting folder")
+                }
+            }, this);
         }, this);
         div3.add(del);
         this._menu.add(div3);
@@ -263,7 +271,7 @@ class PFolder extends Folder{
         this.add(this._menu);
     }
     async _changeFolderMeta(folderId, data) {
-        let res_data = await gn.app.App.instance().phpRequest('./php/folder/changeMeta.php', {
+        let res_data = await gn.app.App.instance().phpRequestJ('./php/folder/changeMeta.php', {
             folderid: folderId,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
@@ -272,7 +280,7 @@ class PFolder extends Folder{
         return res_data.status == 1;
     }
     async _deleteFolder(folderId) {
-        let data = await gn.app.App.instance().phpRequest('./php/folder/delete.php', {
+        let data = await gn.app.App.instance().phpRequestJ('./php/folder/delete.php', {
             folderid: folderId,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId

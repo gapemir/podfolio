@@ -69,30 +69,52 @@ class File extends gn.ui.tile.TileItem{
             if(name.includes("%")){
                 name = this._data.storeId;
             }
-            Application.instance().writeToClipboard(link + "data/"+ gn.app.App.instance().userId +"/"+name+"?key="+this._data.fileKey);
+            Application.instance().writeToClipboard(link + "data/"+ gn.app.App.instance().userId +"/"+this._data.storeId+"?key="+this._data.fileKey);
             //navigator.clipboard.writeText(link + "data/"+userid+"/"+name+"?key="+this._data.fileKey)
         }, this);
         this._head.add(share);
 
         let headTextDiv = new gn.ui.basic.Widget("div");
-        headTextDiv.setStyle("textIndent", "16px");
         this._head.add(headTextDiv)
         let headText = new gn.ui.basic.Label(this._data.name, "", this);
+        headText.setStyle("cursor", "pointer");
         headTextDiv.add(headText);
     
         this._cont = new gn.ui.basic.Widget("div", "fileCont");
         this.add(this._cont);
 
         let contentItem = null;
-        if(this._data.mimetype.includes("image")){
+        let mimetype = this._data.mimetype;
+        if(mimetype.includes("image/")){
             let src = "./data/" + gn.app.App.instance().userId + "/" + this._data.fileid + "?key=" + this._data.fileKey;
             contentItem = new gn.ui.basic.Image(src, "fileImage");
         }
-        else if(this._data.mimetype.includes("pdf")){
+        else if(mimetype.includes("pdf")){
             contentItem = new gn.ui.basic.Icon(70, "fa-file-pdf", ["fa-regular"] );
         }
-        else if(this._data.mimetype.includes("text")){
+        else if(mimetype.includes("text/")){
             contentItem = new gn.ui.basic.Icon(70, "fa-file-lines", ["fa-regular"] );
+        }
+        else if(mimetype.includes("wordprocessingml") || mimetype.includes("msword") || mimetype.includes("ms-word")){
+            contentItem = new gn.ui.basic.Icon(70, "fa-file-word", ["fa-regular"] );
+        }
+        else if(mimetype.includes("spreadsheetml") || mimetype.includes("excel")){
+            contentItem = new gn.ui.basic.Icon(70, "fa-file-excel", ["fa-regular"] );
+        }
+        else if(mimetype.includes("presentationml") || mimetype.includes("powerpoint")){
+            contentItem = new gn.ui.basic.Icon(70, "fa-file-powerpoint", ["fa-regular"] );
+        }
+        else if(mimetype.includes("application/zip")){
+            contentItem = new gn.ui.basic.Icon(70, "fa-file-zipper", ["fa-regular"] );
+        }
+        else if(mimetype.includes("audio/")){
+            contentItem = new gn.ui.basic.Icon(70, "fa-file-audio", ["fa-regular"] );
+        }
+        else if(mimetype.includes("video/")){
+            contentItem = new gn.ui.basic.Icon(70, "fa-file-video", ["fa-regular"] );
+        }
+        else {
+            contentItem = new gn.ui.basic.Icon(70, "fa-file", ["fa-regular"] );
         }
         this._cont.add(contentItem);
     
@@ -115,12 +137,7 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
         download.tooltip = "Download";
         download.addEventListener("click", async function(){
-            let ret = await this._createZip(this._data.storeId, this._data.fileKey);
-            if(ret.status == -1){
-                console.log("Error creating zip file")
-                return;
-            }
-            //Application.instance().downloadFile("./data/" + gn.app.App.instance().userId + "/" + this._data.storeId + "?key=" + this._data.fileKey, this._data.name);
+            await this._downloadZip(this._data.storeId, this._data.name + ".zip");
         }, this);
         this._head.add(download);
         let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
@@ -133,14 +150,14 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
             if(name.includes("%")){
                 name = this._data.storeId;
             }
-            Application.instance().writeText(link + "data/"+ gn.app.App.instance().userId +"/"+name+"?key="+this._data.fileKey)
+            Application.instance().writeToClipboard(link + "data/"+ gn.app.App.instance().userId +"/"+this._data.storeId+"?key="+this._data.fileKey)
         }, this);
         this._head.add(share);
 
         let headTextDiv = new gn.ui.basic.Widget("div");
-        headTextDiv.setStyle("textIndent", "16px");
         this._head.add(headTextDiv)
         let headText = new gn.ui.basic.Label(this._data.name, "", this);
+        headText.setStyle("cursor", "pointer");
         headTextDiv.add(headText);
     
         this._cont = new gn.ui.basic.Widget("div", "fileCont");
@@ -158,5 +175,21 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
             window.location.href = "./data/" + userid + "/" + file.fileid + "?key=" + file.fileKey;
         };*/
         contentItem.setStyle("cursor", "pointer"); 
+    }
+    async _downloadZip(storeId, filename = "folder.zip"){
+        let data = await gn.app.App.instance().phpRequestA("./php/folder/createZip.php", {
+            token: gn.app.App.instance().token,
+            userid: gn.app.App.instance().userId,
+            folderid: storeId,});
+        const blob = new Blob([data], { type: 'application/zip' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        return true;
     }
 }

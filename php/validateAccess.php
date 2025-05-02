@@ -14,7 +14,7 @@
             $dev = true;
     }
 
-    $sql = "SELECT name, public, fileKey FROM file WHERE name = '$file' OR fileid = '$file'";
+    $sql = "SELECT fileid, name, public, fileKey FROM file WHERE name = '$file' OR fileid = '$file'";
     $result = mysqli_execute_query($conn, $sql);
 
     if($dev){
@@ -33,15 +33,13 @@
         }
 
         if( $row['public'] == true || $row['fileKey'] == $key) {
-            $imagePath = '../data/' . $userid . '/' . $row['name'];
+            $imagePath = '../data/' . $userid . '/' . $row['fileid'] . '.' . pathinfo($row['name'], PATHINFO_EXTENSION);
             if (file_exists($imagePath)) {
                 $mimeType = mime_content_type($imagePath);
-
                 if(!$dev) {
                     header('Content-Type: ' . $mimeType);
                     readfile($imagePath);
                 } else {
-
                     var_dump($imagePath);
                     var_dump($mimeType);
                     exit();

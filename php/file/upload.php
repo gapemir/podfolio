@@ -6,6 +6,9 @@
     $token = $_POST['token'];
     $parent = $_POST['parent'];
 
+    if($parent == "null") // becouse we use formData() it is encoded diferently and we set it to null
+        $parent = NULL;
+
 
     if(validity($userid, $token) != Ret::Ok->value) {
         echo JSON_encode(["status" => Ret::UserTokenMissmatch->value]);
@@ -14,10 +17,16 @@
    
     if ( $_SERVER['REQUEST_METHOD'] == 'POST' && isset( $_FILES['file'] ) ) {
         $target_dir = __DIR__ . "/../../data/" . $userid . "/";
-        if ( strlen( $fileName ) > 0 )
+
+        $fileKey = bin2hex(random_bytes(32));
+        $fileNameToStore = basename($_FILES["file"]["name"]);
+        $internalFileName = substr( hash( "sha256", $fileNameToStore . time() ), 0, 20 );
+        $mimeType = mime_content_type($_FILES["file"]["tmp_name"]);
+        /*if ( strlen( $fileName ) > 0 )
             $target_file = $target_dir . $fileName . "." . pathinfo( $_FILES["file"]["name"], PATHINFO_EXTENSION );
         else
-            $target_file = $target_dir . basename($_FILES["file"]["name"]);
+            $target_file = $target_dir . basename($_FILES["file"]["name"]);*/
+        $target_file = $target_dir . $internalFileName . "." . pathinfo( $_FILES["file"]["name"], PATHINFO_EXTENSION );
         //$imageFileType = strtolower( pathinfo( $target_file, PATHINFO_EXTENSION ) );
 
         /*// Check if file is a actual image or fake image
@@ -48,14 +57,7 @@
         }*/
  
         if ( move_uploaded_file ($_FILES["file"]["tmp_name"], $target_file ) ) {
-            $fileKey = bin2hex(random_bytes(32));
-            $fileNameToStore = basename($target_file);
-            $internalFileName = substr( hash( "sha256", $fileNameToStore ), 0, 20 );
-            $mimeType = mime_content_type($target_file);
-            $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype, parent) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType', '$parent')";
-            if($parent == "null"){
-                $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType')";
-            }
+            $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype, parent) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType', NULLIF('$parent',''))";
             if( mysqli_execute_query($conn, $sql) ) {
                 echo json_encode( [ "status" => Ret::Ok->value, "file" => [
                     "fileid" => $internalFileName, 
@@ -65,7 +67,7 @@
                     "advertize" => false,
                     "createdAt" => date("Y-m-d H:i:s"),
                     "mimetype" => $mimeType,
-                    "parent" => $parent,
+                    "parent" => $parent=="null" ? null : $parent,
                     ] ] );
             } else {
                 unlink($target_file);

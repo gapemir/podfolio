@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="gn/gn.js"></script>
+    <link rel="stylesheer" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM8e+Pp4j7xk5l5z5e5e5e5e5e5e5e5e5e5e" crossorigin="anonymous">
+</head>
+<body>
+    
+</body>
+</html>
+
+
+
+
+<!--
+{
+    option:{value:1, label:"Option 1", defaultSelected:true},
+    optgroup:{label:"Group 1", options:[{value:5, label:"Option 5"}, {value:6, label:"Option 6"}]},
+    optgroup:{label:"Group 2", options:[{value:7, label:"Option 7"}, {value:8, label:"Option 8"}]}
+    hr:{}
+    option:{value:2, label:"Option 2"},
+}
+-->
+
+<script>
+    let div = new gn.ui.container.Row();
+    let x = new gn.ui.basic.Icon(12, "fa-user", ["fa-solid"])
+    div.add(x);
+    let y = new gn.ui.basic.Icon(12, "fa-folder", ["fa-solid"])
+    div.addBefore(y);
+    let z = new gn.ui.basic.Icon(12, "fa-file", ["fa-solid"])
+    div.addAfter(z);
+    document.body.appendChild(div.element);
+
+</script>
