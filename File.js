@@ -6,16 +6,19 @@ class TileContainer extends gn.ui.tile.TileContainer{
         this.model = new gn.model.TreeModel();
         this._model.dataIdentifier = "storeId";
         this._model.parentIdentifier = "parent";
+        this.model.viewId = "name";
         this.tileClass = File;
         this.subItemContClass = Folder;
         
-        this._breadcrumb = new gn.ui.control.Breadcrumb();
-        this._breadcrumb.model = this._model;
+        this.breadcrumb = new gn.ui.control.Breadcrumb();
+        this.breadcrumb.model = this._model;
+        this.breadcrumb.topLevelName = "Content";
+        /*
         this._breadcrumb.addEventListener("back", function(){
             if(!gn.lang.Var.isNull(this._currentGroup)){
                 this.openGroup(this._model.getParent(this._currentGroup));
             }
-        }, this);
+        }, this);*/
         this._header.add(this._breadcrumb);
     }
 
