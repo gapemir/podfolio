@@ -36,29 +36,20 @@ class Header extends gn.ui.Header{
     constructor() {
         super({left: true, center: true, right: true});
         this.sticky = true;
-        this.addClass("header");
-        this.left.add(new gn.ui.basic.Label("Podfolio"));
-        this.center.add(new gn.ui.basic.Label("Your personal pastebin"));
+        this.left.add(new gn.ui.basic.Label(this.tr("PODFOLIO")));
+        this.center.add(new gn.ui.basic.Label(this.tr("YOUR_PERSONAL_PASTEBIN")));
         let user = new gn.ui.basic.Icon(30, "fa-user", ["fa-solid"])
         user.addEventListener("click", function () {
-            let menu = new gn.ui.popup.Menu(user);
-            menu.items = [
-                {
-                    label: new gn.ui.basic.Label("Logout"),
-                    icon: new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]),
-                    action: function () {
-                        Application.instance().logout();
-                    }
-                },
-                {
-                    label: new gn.ui.basic.Label("My public page"),
-                    icon: new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]),
-                    action: function () {
-                        window.location.href = "./public.html?user=" + Application.instance().userId;
-                    }
-                },
-            ]
-            menu.show();
+            if( gn.lang.Var.isNull(this._popup) ){
+                this._popup = new gn.ui.popup.Menu(user);
+                this._popup.addItem(new gn.ui.popup.MenuItem(new gn.ui.basic.Label(this.tr("LOGOUT")), new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]), function () {
+                    Application.instance().logout();
+                }));
+                this._popup.addItem(new gn.ui.popup.MenuItem(new gn.ui.basic.Label(this.tr("MY_PUBLIC_PAGE")), new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]), function () {
+                    window.location.href = "./public.html?user=" + Application.instance().userId;
+                }));
+            }
+            this._popup.show(); 
         }, this);
         this.right.add(user);
         

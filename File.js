@@ -19,7 +19,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
                 this.openGroup(this._model.getParent(this._currentGroup));
             }
         }, this);*/
-        this._header.add(this._breadcrumb);
+        this._header.add(this.breadcrumb);
     }
 
     genFakeTileItems(){
