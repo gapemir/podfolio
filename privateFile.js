@@ -4,8 +4,8 @@ class PTileContainer extends TileContainer{
         this.tileClass = PFile;
         this.subItemContClass = PFolder;
         
-        this._firstItem = new gn.ui.basic.Widget("div", "fileTile");
-        let head = new gn.ui.basic.Widget("div", "fileHead");
+        this._firstItem = new gn.ui.basic.Widget(new gn.ui.layout.Column(), "div", "fileTile");
+        let head = new gn.ui.basic.Widget(new gn.ui.layout.Row(),"div", "fileHead");
         head.add(new gn.ui.basic.Label("Actions"));
         this._firstItem.add(head);
 

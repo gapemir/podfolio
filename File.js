@@ -53,7 +53,7 @@ class File extends gn.ui.tile.TileItem{
     constructor(data, parent) {
         super(data, parent)
 
-        this._head = new gn.ui.basic.Widget("div", "fileHead");
+        this._head = new gn.ui.basic.Widget(null, "div", "fileHead");
         this.add(this._head);
 
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
@@ -77,13 +77,13 @@ class File extends gn.ui.tile.TileItem{
         }, this);
         this._head.add(share);
 
-        let headTextDiv = new gn.ui.basic.Widget("div");
+        let headTextDiv = new gn.ui.basic.Widget(null, "div");
         this._head.add(headTextDiv)
         let headText = new gn.ui.basic.Label(this._data.name, "", this);
         headText.setStyle("cursor", "pointer");
         headTextDiv.add(headText);
     
-        this._cont = new gn.ui.basic.Widget("div", "fileCont");
+        this._cont = new gn.ui.basic.Widget(null, "div", "fileCont");
         this.add(this._cont);
 
         let contentItem = null;
@@ -134,7 +134,7 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
     constructor(data, parent) {
         super(data, parent)
         
-        this._head = new gn.ui.basic.Widget("div", "fileHead");
+        this._head = new gn.ui.basic.Widget(new gn.ui.layout.Row(), "div", "fileHead");
         this.add(this._head);
         //folders are not yed downloadable, we need to construct a zip file
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
@@ -157,13 +157,13 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
         }, this);
         this._head.add(share);
 
-        let headTextDiv = new gn.ui.basic.Widget("div");
+        let headTextDiv = new gn.ui.basic.Widget(null, "div");
         this._head.add(headTextDiv)
         let headText = new gn.ui.basic.Label(this._data.name, "", this);
         headText.setStyle("cursor", "pointer");
         headTextDiv.add(headText);
     
-        this._cont = new gn.ui.basic.Widget("div", "fileCont");
+        this._cont = new gn.ui.basic.Widget(null, "div", "fileCont");
         this.add(this._cont);
 
         let contentItem = new gn.ui.basic.Icon(70, "fa-folder", ["fa-regular"] )
