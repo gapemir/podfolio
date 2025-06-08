@@ -127,26 +127,32 @@ class PFile extends File{
         this._menuIsShown = false;
         this._menu = new gn.ui.container.Column("fileMenu fileCont");
         let div1 = new gn.ui.container.Row();
-        let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
-        inp1.addEventListener("click", async function(){
+        //let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
+        //inp1.addEventListener("click", async function(){
+        let inp1 = new gn.ui.control.Switch();
+        inp1.addEventListener("change", async function(){
             if(await this._changeFileMeta(this._data.storeId, ["public", inp1.value])){
                 this._data.public = inp1.value;
             }else{
                 console.error("Error changing meta data")
             }
         }, this);
+        div1.setStyle("height", "1em");
         div1.add(inp1);
         div1.add(new gn.ui.basic.Label("Public"));
         this._menu.add(div1);
         let div2 = new gn.ui.container.Row();
-        let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
-        inp2.addEventListener("click", async function(){
+        //let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
+        //inp2.addEventListener("click", async function(){
+        let inp2 = new gn.ui.control.Switch();
+        inp2.addEventListener("change", async function(){
             if(await this._changeFileMeta(this._data.storeId, ["advertize", inp2.value])){
                 this._data.advertize = inp2.value;
             }else{
                 console.error("Error changing meta data")
             }
         }, this);
+        div2.setStyle("height", "1em");
         div2.add(inp2);
         div2.add(new gn.ui.basic.Label("Advertize"));
         this._menu.add(div2);
@@ -161,6 +167,7 @@ class PFile extends File{
             }, this);
             dlg.show();
         }, this);
+        div3.setStyle("height", "1em");
         div3.add(del);
         this._menu.add(div3);
         this._menu.setStyle("display", "none");
@@ -227,8 +234,10 @@ class PFolder extends Folder{
         this._menuIsShown = false;
         this._menu = new gn.ui.container.Column("fileMenu fileCont");
         let div1 = new gn.ui.container.Row();
-        let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
-        inp1.addEventListener("click", async function(){
+        //let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
+        //inp1.addEventListener("click", async function(){
+        let inp1 = new gn.ui.control.Switch();
+        inp1.addEventListener("change", async function(){
             let ret = await this._changeFolderMeta(this._data.storeId, ["public", inp1.value]);
             if(ret){
                 this._data.public = inp1.value;
@@ -236,12 +245,15 @@ class PFolder extends Folder{
                 console.error("Error changing meta data")
             }
         }, this);
+        div1.setStyle("height", "1em");
         div1.add(inp1);
         div1.add(new gn.ui.basic.Label("Public"));
         this._menu.add(div1);
         let div2 = new gn.ui.container.Row();
-        let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
-        inp2.addEventListener("click", async function(){
+        //let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
+        //inp2.addEventListener("click", async function(){
+        let inp2 = new gn.ui.control.Switch();
+        inp2.addEventListener("change", async function(){
             let ret = await this._changeFolderMeta(this._data.storeId, ["advertize", inp2.value]);
             if(ret){
                 this._data.public = inp1.value;
@@ -249,6 +261,7 @@ class PFolder extends Folder{
                 console.error("Error changing meta data")
             }
         }, this);
+        div2.setStyle("height", "1em");
         div2.add(inp2);
         div2.add(new gn.ui.basic.Label("Advertize"));
         this._menu.add(div2);
@@ -265,6 +278,7 @@ class PFolder extends Folder{
                 }
             }, this);
         }, this);
+        div3.setStyle("height", "1em");
         div3.add(del);
         this._menu.add(div3);
         this._menu.setStyle("display", "none");
