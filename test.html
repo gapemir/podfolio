@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <script src="gn/gn.js"></script>
-    <link rel="stylesheer" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM8e+Pp4j7xk5l5z5e5e5e5e5e5e5e5e5e5e" crossorigin="anonymous">
+    <link rel="stylesheet" href="gn/css/gn.css">
+    <link rel="stylesheet" href="gn/css/font-awesome/all.css">
 </head>
 <body>
-    
+
 </body>
 </html>
 
@@ -26,13 +27,26 @@
 -->
 
 <script>
-    let div = new gn.ui.container.Row();
-    let x = new gn.ui.basic.Icon(12, "fa-user", ["fa-solid"])
-    div.add(x);
-    let y = new gn.ui.basic.Icon(12, "fa-folder", ["fa-solid"])
-    div.addBefore(y);
-    let z = new gn.ui.basic.Icon(12, "fa-file", ["fa-solid"])
-    div.addAfter(z);
-    document.body.appendChild(div.element);
+    let grid = new gn.ui.container.Grid();
+    grid.layoutManager.templateColumns = 3;
+    grid.layoutManager.templateRows = 3;
+    grid.layoutManager.gap = 10;
+    document.body.appendChild(grid.element);
+    for(let i = 0; i < 10; i++) {
+        let div = new gn.ui.basic.Widget();
+        div.add(new gn.ui.basic.Label("Label " + (i + 1)));
+        grid.add(div);
+    }
+    /*let div = new gn.ui.container.Column();
+    let textinp = new gn.ui.input.Line("", "placeholder");
+    div.add(textinp);
+    let textmultiline = new gn.ui.input.MultiLine("", );
+    div.add(textmultiline);
+    let numberinp = new gn.ui.input.Number();
+    numberinp.step = 16;
+    numberinp.min = 0;
+    numberinp.max = 100;
+    div.add(numberinp);
+    document.body.appendChild(div.element);*/
 
 </script>
