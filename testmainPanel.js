@@ -29,10 +29,10 @@ function rebuild(){
         let allItems = [ ...data.folders, ...data.files ];
         allItems.forEach(el => {
             if(el.fileid){
-                el.type = gn.model.Type.item;
+                el.type = gn.model.Model.Type.item;
                 el.storeId = el.fileid;
             }else{
-                el.type = gn.model.Type.group;
+                el.type = gn.model.Model.Type.group;
                 el.storeId = el.folderid;
             }
         });

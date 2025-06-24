@@ -58,7 +58,7 @@ class PTileContainer extends TileContainer{
             console.log(data);
             if(data.status === 1){
                 data.file.storeId = data.file.fileid;
-                data.file.type = gn.model.Type.item;
+                data.file.type = gn.model.Model.Type.item;
                 this.model.addData(data.file);
             } else {
                 alert('File upload failed');

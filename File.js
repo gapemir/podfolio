@@ -4,8 +4,8 @@ class TileContainer extends gn.ui.tile.TileContainer{
         this.addClass('fileList');
         this._element.id = 'fileList';
         this.model = new gn.model.TreeModel();
-        this._model.dataIdentifier = "storeId";
-        this._model.parentIdentifier = "parent";
+        this._model.dataId = "storeId";
+        this._model.parentId = "parent";
         this.model.viewId = "name";
         this.tileClass = File;
         this.subItemContClass = Folder;
@@ -55,7 +55,7 @@ class File extends gn.ui.tile.TileItem{
 
         this.layoutManager = new gn.ui.layout.Column();
 
-        this._head = new gn.ui.basic.Widget(null, "div", "fileHead");
+        this._head = new gn.ui.container.Row("fileHead");
         this.add(this._head);
 
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
