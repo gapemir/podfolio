@@ -21,7 +21,7 @@ class PTileContainer extends TileContainer{
         this._firstItem.nameOfFile = new gn.ui.input.Line("", "file whitout extension");
         cont.add(this._firstItem.nameOfFile);
 
-        let but1 = new gn.ui.control.Button("", "Upload");
+        let but1 = new gn.ui.control.Button("Upload");
         but1.addEventListener("click", this._uploadFile, this);
         cont.add(but1);
 
@@ -30,7 +30,7 @@ class PTileContainer extends TileContainer{
         this._firstItem.nameOfFolder = new gn.ui.input.Line("", "name of new folder");
         cont.add(this._firstItem.nameOfFolder);
 
-        let but2 = new gn.ui.control.Button("", "New folder");
+        let but2 = new gn.ui.control.Button("New folder");
         but2.addEventListener("click", this._createNewFolder, this);
         cont.add(but2, but1);
 
@@ -83,7 +83,15 @@ class PTileContainer extends TileContainer{
                 parent : this._currentGroup
             })
         }).then(response => response.json())
-        .then(response=>{console.log(response);})
+        .then(response=>{
+            if(response.status == 1){
+                response.folder.storeId = response.folder.folderId;
+                response.folder.type = gn.model.Model.Type.group;
+                this.model.addData(response.folder);
+            }else{
+                alert("Error creating folder: " + response.message);
+            }
+        })
     }
 }
 class PFile extends File{
@@ -96,10 +104,10 @@ class PFile extends File{
             pub.tooltip = "Public";
             this._head.add(pub);
         }
-        if(this._data.advertize){
+        if(this._data.advertise){
             let adv = new gn.ui.basic.Icon(14, "fa-ad", ["fa-solid"]);
             adv.setStyle("color", "green");
-            adv.tooltip = "Advertize";
+            adv.tooltip = "Advertise";
             this._head.add(adv);
         }
 
@@ -114,22 +122,26 @@ class PFile extends File{
             this._buildMenu();
         }
         if(this._menuIsShown){
-            this._menu.setStyle("display", "none");
-            this._cont.setStyle("display", "flex");
+            this._menu.exclude();
+            this._cont.exclude(false);
             this._menuIsShown = false;
         }else{
-            this._menu.setStyle("display", "flex");
-            this._cont.setStyle("display", "none");
+            this._menu.exclude(false);
+            this._cont.exclude();
             this._menuIsShown = true;
         }
     }
     _buildMenu(){
         this._menuIsShown = false;
-        this._menu = new gn.ui.container.Column("fileMenu fileCont");
-        let div1 = new gn.ui.container.Row();
-        //let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
-        //inp1.addEventListener("click", async function(){
-        let inp1 = new gn.ui.control.Switch();
+        this._menu = new gn.ui.container.Grid("fileMenu");
+        this._menu.layoutManager.templateColumns = "50px 1fr";
+        this._menu.layoutManager.templateRows = "repeat(3, 35px)";
+        this._menu.layoutManager.gap = "10px";
+        this._menu.setStyle("width", "fit-content");
+        this._menu.setStyle("align-content", "center");
+        this._menu.setStyle("align-items", "center");
+
+        let inp1 = new gn.ui.control.Switch(this._data.public);
         inp1.addEventListener("change", async function(){
             if(await this._changeFileMeta(this._data.storeId, ["public", inp1.value])){
                 this._data.public = inp1.value;
@@ -137,27 +149,21 @@ class PFile extends File{
                 console.error("Error changing meta data")
             }
         }, this);
-        div1.setStyle("height", "1em");
-        div1.add(inp1);
-        div1.add(new gn.ui.basic.Label("Public"));
-        this._menu.add(div1);
-        let div2 = new gn.ui.container.Row();
-        //let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
-        //inp2.addEventListener("click", async function(){
-        let inp2 = new gn.ui.control.Switch();
+        this._menu.add(inp1);
+        this._menu.add(new gn.ui.basic.Label("Public"));
+
+        let inp2 = new gn.ui.control.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
-            if(await this._changeFileMeta(this._data.storeId, ["advertize", inp2.value])){
-                this._data.advertize = inp2.value;
+            if(await this._changeFileMeta(this._data.storeId, ["advertise", inp2.value])){
+                this._data.advertise = inp2.value;
             }else{
                 console.error("Error changing meta data")
             }
         }, this);
-        div2.setStyle("height", "1em");
-        div2.add(inp2);
-        div2.add(new gn.ui.basic.Label("Advertize"));
-        this._menu.add(div2);
-        let div3 = new gn.ui.container.Row();
-        let del = new gn.ui.control.Button("fileMenuButton", "Delete");
+        this._menu.add(inp2);
+        this._menu.add(new gn.ui.basic.Label("Advertise"));
+
+        let del = new gn.ui.control.Button("Delete", "fileMenuButton");
         del.addEventListener("click", async function(){
             let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label("Delete file"), new gn.ui.basic.Label("Are you sure you want to delete this file?"));
             dlg.addEventListener("yes", async function(){
@@ -167,10 +173,9 @@ class PFile extends File{
             }, this);
             dlg.show();
         }, this);
-        div3.setStyle("height", "1em");
-        div3.add(del);
-        this._menu.add(div3);
-        this._menu.setStyle("display", "none");
+        del.setStyle("grid-column", "1 / span 2");
+        this._menu.add(del);
+
         this.add(this._menu);
     }
     async _changeFileMeta(fileId, data) {
@@ -204,10 +209,10 @@ class PFolder extends Folder{
             pub.tooltip = "Public";
             this._head.add(pub);
         }
-        if(this._data.advertize){
+        if(this._data.advertise){
             let adv = new gn.ui.basic.Icon(14, "fa-ad", ["fa-solid"]);
             adv.setStyle("color", "green");
-            adv.tooltip = "Advertize";
+            adv.tooltip = "Advertise";
             this._head.add(adv);
         }
 
@@ -221,22 +226,26 @@ class PFolder extends Folder{
             this._buildMenu();
         }
         if(this._menuIsShown){
-            this._menu.setStyle("display", "none");
-            this._cont.setStyle("display", "flex");
+            this._menu.exclude();
+            this._cont.exclude(false);
             this._menuIsShown = false;
         }else{
-            this._menu.setStyle("display", "flex");
-            this._cont.setStyle("display", "none");
+            this._menu.exclude(false);
+            this._cont.exclude();
             this._menuIsShown = true;
         }
     }
     _buildMenu(){
         this._menuIsShown = false;
-        this._menu = new gn.ui.container.Column("fileMenu fileCont");
-        let div1 = new gn.ui.container.Row();
-        //let inp1 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.public);
-        //inp1.addEventListener("click", async function(){
-        let inp1 = new gn.ui.control.Switch();
+        this._menu = new gn.ui.container.Grid("fileMenu");
+        this._menu.layoutManager.templateColumns = "50px 1fr";
+        this._menu.layoutManager.templateRows = "repeat(3, 35px)";
+        this._menu.layoutManager.gap = "10px";
+        this._menu.setStyle("width", "fit-content");
+        this._menu.setStyle("align-content", "center");
+        this._menu.setStyle("align-items", "center");
+
+        let inp1 = new gn.ui.control.Switch(this._data.public);
         inp1.addEventListener("change", async function(){
             let ret = await this._changeFolderMeta(this._data.storeId, ["public", inp1.value]);
             if(ret){
@@ -245,28 +254,22 @@ class PFolder extends Folder{
                 console.error("Error changing meta data")
             }
         }, this);
-        div1.setStyle("height", "1em");
-        div1.add(inp1);
-        div1.add(new gn.ui.basic.Label("Public"));
-        this._menu.add(div1);
-        let div2 = new gn.ui.container.Row();
-        //let inp2 = new gn.ui.input.CheckBox("fileMenuCheckBox", this._data.advertize);
-        //inp2.addEventListener("click", async function(){
-        let inp2 = new gn.ui.control.Switch();
+        this._menu.add(inp1);
+        this._menu.add(new gn.ui.basic.Label("Public"));
+
+        let inp2 = new gn.ui.control.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
-            let ret = await this._changeFolderMeta(this._data.storeId, ["advertize", inp2.value]);
+            let ret = await this._changeFolderMeta(this._data.storeId, ["advertise", inp2.value]);
             if(ret){
-                this._data.public = inp1.value;
+                this._data.advertise = inp1.value;
             }else{
                 console.error("Error changing meta data")
             }
         }, this);
-        div2.setStyle("height", "1em");
-        div2.add(inp2);
-        div2.add(new gn.ui.basic.Label("Advertize"));
-        this._menu.add(div2);
-        let div3 = new gn.ui.container.Row();
-        let del = new gn.ui.control.Button("fileMenuButton", "Delete");
+        this._menu.add(inp2);
+        this._menu.add(new gn.ui.basic.Label("Advertise"));
+
+        let del = new gn.ui.control.Button("Delete", "fileMenuButton");
         del.addEventListener("click", async function(){
             let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label("Delete folder"), new gn.ui.basic.Label("Are you sure you want to delete this folder?"));
             dlg.addEventListener("yes", async function(){
@@ -277,11 +280,11 @@ class PFolder extends Folder{
                     console.error("Error deleting folder")
                 }
             }, this);
+            dlg.show();
         }, this);
-        div3.setStyle("height", "1em");
-        div3.add(del);
-        this._menu.add(div3);
-        this._menu.setStyle("display", "none");
+        del.setStyle("grid-column", "1 / span 2");
+        this._menu.add(del);
+
         this.add(this._menu);
     }
     async _changeFolderMeta(folderId, data) {

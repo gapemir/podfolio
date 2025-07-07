@@ -8,7 +8,7 @@ class Application extends gn.app.App{
         if( gn.lang.Var.isNull(userId) ){
             userId = new URL(window.location.href).searchParams.get("user") //its user that shared its public page
         }
-        return userId; //or its null witch means we go to first page aka advertize
+        return userId; //or its null witch means we go to first page aka advertise
     }
     get token() {
         let token = gn.util.Cookie.get().podfolioToken; //either its logged in user

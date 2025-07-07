@@ -10,31 +10,31 @@
     $sql = "";
 
     if(!isset($token)){
-        $sql = "SELECT fileid, name, fileKey, public, advertize, createdAt, mimetype, parent FROM file WHERE userid = '$userid' AND public = true";
+        $sql = "SELECT fileid, name, fileKey, public, advertise, createdAt, mimetype, parent FROM file WHERE userid = '$userid' AND public = true";
     }else{
         if( validity($userid, $token) != 1){
             echo json_encode( ["status" => Ret::UserTokenMissmatch->value] );
             exit();
         }
-        $sql = "SELECT fileid, name, fileKey, public, advertize, createdAt, mimetype, parent FROM file WHERE userid = '$userid'";    
+        $sql = "SELECT fileid, name, fileKey, public, advertise, createdAt, mimetype, parent FROM file WHERE userid = '$userid'";    
     }
     $result = mysqli_query($conn, $sql);
     $files = [];
     while( $row = mysqli_fetch_assoc($result) ) {
         $row['public'] = (bool)$row['public'];
-        $row['advertize'] = (bool)$row['advertize'];
+        $row['advertise'] = (bool)$row['advertise'];
         $files[] = $row;
     }
     if(!isset($token)){
-        $sql = "SELECT folderid, name, fileKey, createdAt, public, advertize, parent FROM folder WHERE userid = '$userid' AND public = true";
+        $sql = "SELECT folderid, name, fileKey, createdAt, public, advertise, parent FROM folder WHERE userid = '$userid' AND public = true";
     }else{
-        $sql = "SELECT folderid, name, fileKey, createdAt, public, advertize, parent FROM folder WHERE userid = '$userid'";
+        $sql = "SELECT folderid, name, fileKey, createdAt, public, advertise, parent FROM folder WHERE userid = '$userid'";
     }
     $result = mysqli_query($conn, $sql);
     $folders = [];
     while( $row = mysqli_fetch_assoc($result) ) {
         $row['public'] = (bool)$row['public'];
-        $row['advertize'] = (bool)$row['advertize'];
+        $row['advertise'] = (bool)$row['advertise'];
         $folders[] = $row;
     }
 

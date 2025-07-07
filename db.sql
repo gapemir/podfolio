@@ -17,7 +17,7 @@ CREATE TABLE folder(
     userid VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     public boolean DEFAULT false,
-    advertize boolean DEFAULT false,
+    advertise boolean DEFAULT false,
     parent VARCHAR(255) DEFAULT NULL,
     FOREIGN KEY (parent) REFERENCES folder(folderid),
     FOREIGN KEY (userid) REFERENCES user(userid)
@@ -31,7 +31,7 @@ CREATE TABLE file(
     mimetype VARCHAR(255) NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     public boolean DEFAULT false,
-    advertize boolean DEFAULT false,
+    advertise boolean DEFAULT false,
     parent VARCHAR(255) DEFAULT NULL,
     FOREIGN KEY (userid) REFERENCES user(userid),
     FOREIGN KEY (parent) REFERENCES folder(folderid)

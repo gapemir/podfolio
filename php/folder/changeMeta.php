@@ -2,7 +2,7 @@
     require_once("../inc.php");
 
     $data = JSON_decode(file_get_contents("php://input"), true);
-    if($data["data"][0] != "advertize" && $data["data"][0] != "public") {
+    if($data["data"][0] != "advertise" && $data["data"][0] != "public") {
         echo JSON_encode(["status" => 1]);
         exit();
     }

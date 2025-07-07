@@ -19,7 +19,15 @@
     $sql = "INSERT INTO folder (folderid, userid, name, fileKey, parent) VALUES ('$encFolder', '$userid', '$name', '$fileKey', NULLIF('$parent', ''))";
     $result = mysqli_query($conn, $sql);
     if($result) {
-        echo JSON_encode(["status" => Ret::Ok->value]);
+        echo json_encode( [ "status" => Ret::Ok->value, "folder" => [
+                    "folderId" => $encFolder, 
+                    "name"=> $name,
+                    "fileKey" => $fileKey,
+                    "public" => false,
+                    "advertise" => false,
+                    "createdAt" => date("Y-m-d H:i:s"),
+                    "parent" => $parent=="null" ? null : $parent,
+                    ] ] );
     } else {
         echo JSON_encode(["status" => Ret::ERROR->value]);
     }

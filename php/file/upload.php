@@ -64,7 +64,7 @@
                     "name"=> $fileNameToStore,
                     "fileKey" => $fileKey,
                     "public" => false,
-                    "advertize" => false,
+                    "advertise" => false,
                     "createdAt" => date("Y-m-d H:i:s"),
                     "mimetype" => $mimeType,
                     "parent" => $parent=="null" ? null : $parent,
