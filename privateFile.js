@@ -1,6 +1,6 @@
 class PTileContainer extends TileContainer{
-    constructor(parent) {
-        super(parent)
+    constructor() {
+        super()
         this.tileClass = PFile;
         this.subItemContClass = PFolder;
         
@@ -95,8 +95,8 @@ class PTileContainer extends TileContainer{
     }
 }
 class PFile extends File{
-    constructor(data, parent) {
-        super(data, parent)
+    constructor(data) {
+        super(data)
 
         if(this._data.public){
             let pub = new gn.ui.basic.Icon(14, "fa-users", ["fa-solid"]);
@@ -200,9 +200,8 @@ class PFile extends File{
     }
 }
 class PFolder extends Folder{
-    constructor(data, parent) {
-        super(data, parent)
-
+    constructor(data) {
+        super(data)
         if(this._data.public){
             let pub = new gn.ui.basic.Icon(14, "fa-users", ["fa-solid"]);
             pub.setStyle("color", "green");

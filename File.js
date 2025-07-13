@@ -1,6 +1,6 @@
 class TileContainer extends gn.ui.tile.TileContainer{
-    constructor(parent) {
-        super(parent)
+    constructor() {
+        super()
         this.addClass('fileList');
         this._element.id = 'fileList';
         this.model = new gn.model.TreeModel();
@@ -50,8 +50,8 @@ class TileContainer extends gn.ui.tile.TileContainer{
     }
 }
 class File extends gn.ui.tile.TileItem{
-    constructor(data, parent) {
-        super(data, parent)
+    constructor(data) {
+        super(data)
 
         this.layoutManager = new gn.ui.layout.Column();
 
@@ -133,8 +133,8 @@ class File extends gn.ui.tile.TileItem{
     }
 }
 class Folder extends gn.ui.tile.TileSubItemContainer{
-    constructor(data, parent) {
-        super(data, parent)
+    constructor(data) {
+        super(data)
 
         this.layoutManager = new gn.ui.layout.Column();
         
