@@ -14,10 +14,10 @@
     }
 
     //update all files in folder
-    $children = getAllChildFiles($conn, $data["folderid"]);
+    $children = getAllChildFiles($conn, $data["storeid"]);
 
     $children = arrayToDbValueIN($conn, $children);
-    $sql = "UPDATE file SET " . $data["data"][0] . "=" . ($data["data"][1] ? "true" : "false") . " WHERE fileid IN ('$children');";
+    $sql = "UPDATE file SET " . $data["data"][0] . "=" . ($data["data"][1] ? "true" : "false") . " WHERE storeid IN ('$children');";
     $result = mysqli_query($conn, $sql);
     if(!$result) {
         echo JSON_encode(["status" => Ret::Other->value]);
@@ -25,9 +25,9 @@
     }
 
     //update all folders in the folder
-    $children = getAllChildFolders($conn, $data["folderid"]);
+    $children = getAllChildFolders($conn, $data["storeid"]);
     $children = arrayToDbValueIN($conn, $children);
-    $sql = "UPDATE folder SET " . $data["data"][0] . "=" . ($data["data"][1] ? "true" : "false") . " WHERE folderid IN ('$children');";
+    $sql = "UPDATE folder SET " . $data["data"][0] . "=" . ($data["data"][1] ? "true" : "false") . " WHERE storeid IN ('$children');";
     $result = mysqli_query($conn, $sql);
     if(!$result) {
         echo JSON_encode(["status" => Ret::Other->value]);

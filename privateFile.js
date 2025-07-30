@@ -34,6 +34,10 @@ class PTileContainer extends TileContainer{
         but2.addEventListener("click", this._createNewFolder, this);
         cont.add(but2, but1);
 
+        let butNewNote = new gn.ui.control.Button("New note");
+        butNewNote.addEventListener("click", this._createNewNote, this);
+        cont.add(butNewNote);
+
         this._firstItem.add(cont);
         this.add(this._firstItem);
     }
@@ -57,7 +61,7 @@ class PTileContainer extends TileContainer{
         .then(data => {
             console.log(data);
             if(data.status === 1){
-                data.file.storeId = data.file.fileid;
+                data.file.storeid = data.file.storeid;
                 data.file.type = gn.model.Model.Type.item;
                 this.model.addData(data.file);
             } else {
@@ -85,11 +89,31 @@ class PTileContainer extends TileContainer{
         }).then(response => response.json())
         .then(response=>{
             if(response.status == 1){
-                response.folder.storeId = response.folder.folderId;
+                response.folder.storeid = response.folder.storeid;
                 response.folder.type = gn.model.Model.Type.group;
                 this.model.addData(response.folder);
             }else{
                 alert("Error creating folder: " + response.message);
+            }
+        })
+    }
+    _createNewNote(){
+        fetch('./php/note/create.php', {
+            method: 'POST',
+            body: JSON.stringify({
+                token: gn.app.App.instance().token,
+                userid: gn.app.App.instance().userId,
+                parent : this._currentGroup
+            })
+        }).then(response => response.json())
+        .then(response=>{
+            console.log(response)
+            if(response.status == 1){
+                response.note.storeid = response.note.storeid;
+                response.note.type = gn.model.Model.Type.item;
+                this.model.addData(response.note);
+            }else{
+                alert("Error creating note: " + response.message);
             }
         })
     }
@@ -98,23 +122,56 @@ class PFile extends File{
     constructor(data) {
         super(data)
 
-        if(this._data.public){
-            let pub = new gn.ui.basic.Icon(14, "fa-users", ["fa-solid"]);
-            pub.setStyle("color", "green");
-            pub.tooltip = "Public";
-            this._head.add(pub);
+        this._publicIcon = new gn.ui.basic.Icon(14, "fa-users", ["fa-solid"]);
+        this._publicIcon.setStyle("color", "green");
+        this._publicIcon.tooltip = "Public";
+        this._head.add(this._publicIcon);
+        if(!this._data.public){
+            this._publicIcon.addClass("gn-exclude");
         }
-        if(this._data.advertise){
-            let adv = new gn.ui.basic.Icon(14, "fa-ad", ["fa-solid"]);
-            adv.setStyle("color", "green");
-            adv.tooltip = "Advertise";
-            this._head.add(adv);
+
+        this._advertiseIcon = new gn.ui.basic.Icon(14, "fa-ad", ["fa-solid"]);
+        this._advertiseIcon.setStyle("color", "green");
+        this._advertiseIcon.tooltip = "Advertise";
+        this._head.add(this._advertiseIcon);
+        if(!this._data.advertise){
+            this._advertiseIcon.addClass("gn-exclude");
         }
+
+        let rename = new gn.ui.basic.Icon(14, "fa-pen-to-square", ["fa-solid"]);
+        rename.addEventListener("click", this._rename, this);
+        rename.tooltip = "Rename";
+        this._head.add(rename);
 
         let gear = new gn.ui.basic.Icon(14, "fa-cog", ["fa-solid"]);
         gear.addEventListener("click", this.toggleMenu, this);
         gear.tooltip = "Settings";
         this._head.add(gear);
+
+        if( this._data.mimetype.includes("gn-note/") ){
+            this.addEventListener( "noteChanged", this._noteChanged, this );
+        }
+    }
+    updateItem(data, key){
+        super.updateItem(data, key);
+        switch(key){
+            case "public":
+                if(this._data.public){
+                    this._publicIcon.removeClass("gn-exclude");
+                }
+                else{
+                    this._publicIcon.addClass("gn-exclude");
+                }
+                break;
+            case "advertise":
+                if(this._data.advertise){
+                    this._advertiseIcon.removeClass("gn-exclude");
+                }
+                else{
+                    this._advertiseIcon.addClass("gn-exclude");
+                }
+                break;
+        }
     }
 
     toggleMenu(){
@@ -143,8 +200,9 @@ class PFile extends File{
 
         let inp1 = new gn.ui.control.Switch(this._data.public);
         inp1.addEventListener("change", async function(){
-            if(await this._changeFileMeta(this._data.storeId, ["public", inp1.value])){
-                this._data.public = inp1.value;
+            if(await this._changeContentMeta(this._data.storeid, ["public", inp1.value])){
+                this.layoutParent.model.changeData( this._data.storeid, "public", inp1.value );
+                //this._data.public = inp1.value;
             }else{
                 console.error("Error changing meta data")
             }
@@ -154,8 +212,8 @@ class PFile extends File{
 
         let inp2 = new gn.ui.control.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
-            if(await this._changeFileMeta(this._data.storeId, ["advertise", inp2.value])){
-                this._data.advertise = inp2.value;
+            if(await this._changeContentMeta(this._data.storeid, ["advertise", inp2.value])){
+                this.layoutParent.model.changeData( this._data.storeid, "advertise", inp2.value );
             }else{
                 console.error("Error changing meta data")
             }
@@ -164,61 +222,126 @@ class PFile extends File{
         this._menu.add(new gn.ui.basic.Label("Advertise"));
 
         let del = new gn.ui.control.Button("Delete", "fileMenuButton");
-        del.addEventListener("click", async function(){
-            let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label("Delete file"), new gn.ui.basic.Label("Are you sure you want to delete this file?"));
-            dlg.addEventListener("yes", async function(){
-                if(await this._deleteFile(this._data.storeId)){
-                    this._parent.model.removeData(this._data.storeId)
-                }
-            }, this);
-            dlg.show();
-        }, this);
+        del.addEventListener("click", this._deleteFile, this);
         del.setStyle("grid-column", "1 / span 2");
         this._menu.add(del);
 
         this.add(this._menu);
     }
-    async _changeFileMeta(fileId, data) {
-        let res_data = await gn.app.App.instance().phpRequestJ('./php/file/changeMeta.php', {
-            fileid: fileId,
+    _contentType(){
+        return this._data.mimetype.includes("gn-note/") ? "note" : "file";
+    }
+    async _changeContentMeta(storeid, data) { 
+        let res_data = null;
+        res_data = await gn.app.App.instance().phpRequestJ('./php/' + this._contentType() + '/changeMeta.php', {
+            storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
             data: data
         });
         return res_data.status == 1;
     }
-    async _deleteFile(fileId) {
-        let data = await gn.app.App.instance().phpRequestJ('./php/file/delete.php', {
-            fileid: fileId,
+    async _deleteFile(e) {
+        let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label(this.tr("DELETE")), new gn.ui.basic.Label("Are you sure you want to delete this file?"));
+            dlg.addEventListener("yes", async function(){
+                let data = await gn.app.App.instance().phpRequestJ("./php/" + this._contentType() + "/delete.php", {
+                    storeid: this._data.storeid,
+                    token: gn.app.App.instance().token,
+                    userid: gn.app.App.instance().userId
+                });
+                if(data.status == 1){
+                    this.layoutParent.model.removeData(this._data.storeid)
+                }    
+            }, this);
+        dlg.show();
+    }
+    async _noteChanged(e){
+        if(!this._changeTimer){
+            this._changeTimer = new gn.event.Timer(1000);
+            this._changeTimer.singleShot = true;
+            this._changeTimer.addEventListener("timeout", this._saveNoteChanged, this);
+        }
+        this._changeTimer.restart();
+        this._data.content = e.data.content;
+    }
+    async _saveNoteChanged(){
+        let data = await gn.app.App.instance().phpRequestJ('./php/note/change.php', {
+            storeid: this._data.storeid,
+            content: this._data.content,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId
         });
         return data.status == 1;
     }
-    async renameFile(fileId, name) {
-        throw new Error("Not implemented yet");
+    async _rename(e) {
+        let dlg = gn.ui.popup.Popup.InformationPopup(new gn.ui.basic.Label(this.tr("RENAME")),new gn.ui.input.Line("", this.tr("NEW NAME")));
+        dlg.callback = function(){
+            return this._body._children[0].value;
+        }
+        dlg.addEventListener("ok", async function(e){
+            let data = await gn.app.App.instance().phpRequestJ("./php/"+this._contentType()+"/rename.php", {
+                storeid: this._data.storeid,
+                newname: e.data,
+                token: gn.app.App.instance().token,
+                userid: gn.app.App.instance().userId
+                });
+            if(data.status == 1){
+                this.layoutParent.model.changeData( this._data.storeid, "name", e.data );
+            }
+        }, this);
+        dlg.show();
     }
 }
 class PFolder extends Folder{
     constructor(data) {
         super(data)
-        if(this._data.public){
-            let pub = new gn.ui.basic.Icon(14, "fa-users", ["fa-solid"]);
-            pub.setStyle("color", "green");
-            pub.tooltip = "Public";
-            this._head.add(pub);
+        
+        this._publicIcon = new gn.ui.basic.Icon(14, "fa-users", ["fa-solid"]);
+        this._publicIcon.setStyle("color", "green");
+        this._publicIcon.tooltip = "Public";
+        this._head.add(this._publicIcon);
+        if(!this._data.public){
+            this._publicIcon.addClass("gn-exclude");
         }
-        if(this._data.advertise){
-            let adv = new gn.ui.basic.Icon(14, "fa-ad", ["fa-solid"]);
-            adv.setStyle("color", "green");
-            adv.tooltip = "Advertise";
-            this._head.add(adv);
+
+        this._advertiseIcon = new gn.ui.basic.Icon(14, "fa-ad", ["fa-solid"]);
+        this._advertiseIcon.setStyle("color", "green");
+        this._advertiseIcon.tooltip = "Advertise";
+        this._head.add(this._advertiseIcon);
+        if(!this._data.advertise){
+            this._advertiseIcon.addClass("gn-exclude");
         }
+
+        let rename = new gn.ui.basic.Icon(14, "fa-pen-to-square", ["fa-solid"]);
+        rename.addEventListener("click", this._renameFolder, this);
+        rename.tooltip = "Rename";
+        this._head.add(rename);
 
         let gear = new gn.ui.basic.Icon(14, "fa-cog", ["fa-solid"]);
         gear.addEventListener("click", this.toggleMenu, this);
         gear.tooltip = "Settings";
         this._head.add(gear);
+    }
+    updateItem(data, key){
+        super.updateItem(data, key);
+        switch(key){
+            case "public":
+                if(this._data.public){
+                    this._publicIcon.removeClass("gn-exclude");
+                }
+                else{
+                    this._publicIcon.addClass("gn-exclude");
+                }
+                break;
+            case "advertise":
+                if(this._data.advertise){
+                    this._advertiseIcon.removeClass("gn-exclude");
+                }
+                else{
+                    this._advertiseIcon.addClass("gn-exclude");
+                }
+                break;
+        }
     }
     toggleMenu(){
         if(!this._menu){
@@ -246,9 +369,9 @@ class PFolder extends Folder{
 
         let inp1 = new gn.ui.control.Switch(this._data.public);
         inp1.addEventListener("change", async function(){
-            let ret = await this._changeFolderMeta(this._data.storeId, ["public", inp1.value]);
+            let ret = await this._changeFolderMeta(this._data.storeid, ["public", inp1.value]);
             if(ret){
-                this._data.public = inp1.value;
+                this.layoutParent.model.changeData( this._data.storeid, "public", inp1.value );
             }else{
                 console.error("Error changing meta data")
             }
@@ -258,9 +381,9 @@ class PFolder extends Folder{
 
         let inp2 = new gn.ui.control.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
-            let ret = await this._changeFolderMeta(this._data.storeId, ["advertise", inp2.value]);
+            let ret = await this._changeFolderMeta(this._data.storeid, ["advertise", inp2.value]);
             if(ret){
-                this._data.advertise = inp1.value;
+                this.layoutParent.model.changeData( this._data.storeid, "advertise", inp2.value );
             }else{
                 console.error("Error changing meta data")
             }
@@ -272,9 +395,9 @@ class PFolder extends Folder{
         del.addEventListener("click", async function(){
             let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label("Delete folder"), new gn.ui.basic.Label("Are you sure you want to delete this folder?"));
             dlg.addEventListener("yes", async function(){
-                let res = await this._deleteFolder(this._data.storeId)
+                let res = await this._deleteFolder(this._data.storeid)
                 if(res){
-                    this._parent.model.removeData(this._data.storeId)
+                    this._parent.model.removeData(this._data.storeid)
                 }else{
                     console.error("Error deleting folder")
                 }
@@ -286,24 +409,39 @@ class PFolder extends Folder{
 
         this.add(this._menu);
     }
-    async _changeFolderMeta(folderId, data) {
+    async _changeFolderMeta(storeid, data) {
         let res_data = await gn.app.App.instance().phpRequestJ('./php/folder/changeMeta.php', {
-            folderid: folderId,
+            storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
             data: data
         });
         return res_data.status == 1;
     }
-    async _deleteFolder(folderId) {
+    async _deleteFolder(storeid) {
         let data = await gn.app.App.instance().phpRequestJ('./php/folder/delete.php', {
-            folderid: folderId,
+            storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId
         });
         return data.status == 1;
     }
-    async renameFolder(folderId, name) {
-        throw new Error("Not implemented yet");
+    async _renameFolder(e) {
+        let dlg = gn.ui.popup.Popup.InformationPopup(new gn.ui.basic.Label(this.tr("RENAME_FOLDER")),new gn.ui.input.Line("", this.tr("NEW_NAME")));
+        dlg.callback = function(){
+            return this._body._children[0].value;
+        }
+        dlg.addEventListener("ok", async function(e){
+            let data = await gn.app.App.instance().phpRequestJ("./php/folder/rename.php", {
+                storeid: this._data.storeid,
+                newname: e.data,
+                token: gn.app.App.instance().token,
+                userid: gn.app.App.instance().userId
+                });
+            if(data.status == 1){
+                this.layoutParent.model.changeData( this._data.storeid, "name", e.data );
+            }
+        }, this);
+        dlg.show();
     }
 }

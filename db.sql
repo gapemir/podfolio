@@ -11,7 +11,7 @@ CREATE TABLE user(
 );
 
 CREATE TABLE folder(
-    folderid VARCHAR(255) NOT NULL PRIMARY KEY,
+    storeid VARCHAR(255) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     fileKey VARCHAR(255) NOT NULL,
     userid VARCHAR(255) NOT NULL,
@@ -19,12 +19,12 @@ CREATE TABLE folder(
     public boolean DEFAULT false,
     advertise boolean DEFAULT false,
     parent VARCHAR(255) DEFAULT NULL,
-    FOREIGN KEY (parent) REFERENCES folder(folderid),
+    FOREIGN KEY (parent) REFERENCES folder(storeid),
     FOREIGN KEY (userid) REFERENCES user(userid)
 );
 
 CREATE TABLE file(
-    fileid VARCHAR(255) NOT NULL PRIMARY KEY,
+    storeid VARCHAR(255) NOT NULL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     fileKey VARCHAR(255) NOT NULL,
     userid VARCHAR(255) NOT NULL,
@@ -34,6 +34,20 @@ CREATE TABLE file(
     advertise boolean DEFAULT false,
     parent VARCHAR(255) DEFAULT NULL,
     FOREIGN KEY (userid) REFERENCES user(userid),
-    FOREIGN KEY (parent) REFERENCES folder(folderid)
+    FOREIGN KEY (parent) REFERENCES folder(storeid)
 );
 
+CREATE TABLE note(
+    storeid VARCHAR(255) NOT NULL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    content TEXT,
+    fileKey VARCHAR(255) NOT NULL,
+    userid VARCHAR(255) NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    modifiedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    public boolean DEFAULT false,
+    advertise boolean DEFAULT false,
+    parent VARCHAR(255) DEFAULT NULL,
+    FOREIGN KEY (userid) REFERENCES user(userid),
+    FOREIGN KEY (parent) REFERENCES folder(storeid)
+);

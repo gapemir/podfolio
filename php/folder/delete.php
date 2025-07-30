@@ -3,7 +3,7 @@
     $data = JSON_decode(file_get_contents("php://input"), true);
 
     $userid = $data['userid'];
-    $folderid = $data['folderid'];
+    $storeid = $data['storeid'];
     $token = $data['token'];
 
     if(validity($userid, $token) != Ret::Ok->value) {
@@ -11,19 +11,19 @@
         exit();
     }
 
-    $children = getAllChildFiles($conn, $folderid);
+    $children = getAllChildFiles($conn, $storeid);
     $children = arrayToDbValueIN($conn, $children);
-    $sql = "DELETE FROM file WHERE fileid IN ('$children') AND userid = '$userid';";
+    $sql = "DELETE FROM file WHERE storeid IN ('$children') AND userid = '$userid';";
     $result = mysqli_query($conn, $sql);
     if(!$result) {
         echo JSON_encode(["status" => Ret::Other->value]);
         exit();
     }
 
-    $children = getAllChildFolders($conn, $folderid);
-    $children[] = $folderid;
+    $children = getAllChildFolders($conn, $storeid);
+    $children[] = $storeid;
     foreach ($children as $key => $value) {
-        $sql = "DELETE FROM folder WHERE folderid = '$value' AND userid = '$userid';";
+        $sql = "DELETE FROM folder WHERE storeid = '$value' AND userid = '$userid';";
         $result = mysqli_query($conn, $sql);
         if(!$result) {
             echo JSON_encode(["status" => Ret::Other->value]);

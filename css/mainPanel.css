@@ -108,3 +108,8 @@ body{
     flex-direction: column;
     gap: 10px;
 }
+
+.gn-note{
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
+}

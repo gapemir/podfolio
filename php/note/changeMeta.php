@@ -12,7 +12,7 @@
         echo JSON_encode(["status" => Ret::UserTokenMissmatch->value]);
         exit();
     }
-    $sql = "UPDATE file SET " . $data["data"][0] . "=" . ($data["data"][1] ? "true" : "false") . " WHERE storeid = '" . $data["storeid"] . "';";
+    $sql = "UPDATE note SET " . $data["data"][0] . "=" . ($data["data"][1] ? "true" : "false") . " WHERE storeid = '" . $data["storeid"] . "';";
     $result = mysqli_query($conn, $sql);
 
     if($result) {

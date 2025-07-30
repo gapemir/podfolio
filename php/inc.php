@@ -34,27 +34,27 @@
             return Ret::UserTokenMissmatch->value;
         }
     }
-    function getAllChildFiles($conn, $folderid) {
-        $sql = "SELECT fileid FROM file WHERE parent = '$folderid'";
+    function getAllChildFiles($conn, $storeid) {
+        $sql = "SELECT storeid FROM file WHERE parent = '$storeid'";
         $result = mysqli_query($conn, $sql);
         $children = array();
         while ($row = mysqli_fetch_assoc($result)) {
-            $children[] = $row['fileid'];
+            $children[] = $row['storeid'];
         }
-        $sql = "SELECT folderid FROM folder WHERE parent = '$folderid'";
+        $sql = "SELECT storeid FROM folder WHERE parent = '$storeid'";
         $result = mysqli_query($conn, $sql);
         while ($row = mysqli_fetch_assoc($result)) {
-            $children = array_merge($children, getAllChildFiles($conn, $row['folderid']));
+            $children = array_merge($children, getAllChildFiles($conn, $row['storeid']));
         }
         return $children;
     }
-    function getAllChildFolders($conn, $folderid) {
-        $sql = "SELECT folderid FROM folder WHERE parent = '$folderid'";
+    function getAllChildFolders($conn, $storeid) {
+        $sql = "SELECT storeid FROM folder WHERE parent = '$storeid'";
         $result = mysqli_query($conn, $sql);
         $children = array();
         while ($row = mysqli_fetch_assoc($result)) {
-            $children = array_merge($children, getAllChildFolders($conn, $row['folderid']));
-            $children[] = $row['folderid'];
+            $children = array_merge($children, getAllChildFolders($conn, $row['storeid']));
+            $children[] = $row['storeid'];
         }
         return $children;
     }

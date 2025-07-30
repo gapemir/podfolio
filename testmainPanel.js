@@ -26,14 +26,12 @@ function rebuild(){
         }
         document.getElementById('fileList').appendChild(ROOT._element);
 
-        let allItems = [ ...data.folders, ...data.files ];
+        let allItems = [ ...data.folders, ...data.notes, ...data.files ];
         allItems.forEach(el => {
-            if(el.fileid){
+            if(el.mimetype){
                 el.type = gn.model.Model.Type.item;
-                el.storeId = el.fileid;
-            }else{
+            }else {
                 el.type = gn.model.Model.Type.group;
-                el.storeId = el.folderid;
             }
         });
         ROOT.model.setData(allItems)

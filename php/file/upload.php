@@ -57,10 +57,10 @@
         }*/
  
         if ( move_uploaded_file ($_FILES["file"]["tmp_name"], $target_file ) ) {
-            $sql = "INSERT INTO file (fileid, name, fileKey, userid, mimetype, parent) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType', NULLIF('$parent',''))";
+            $sql = "INSERT INTO file (storeid, name, fileKey, userid, mimetype, parent) VALUES ('$internalFileName', '$fileNameToStore', '$fileKey', '$userid', '$mimeType', NULLIF('$parent',''))";
             if( mysqli_execute_query($conn, $sql) ) {
                 echo json_encode( [ "status" => Ret::Ok->value, "file" => [
-                    "fileid" => $internalFileName, 
+                    "storeid" => $internalFileName, 
                     "name"=> $fileNameToStore,
                     "fileKey" => $fileKey,
                     "public" => false,
