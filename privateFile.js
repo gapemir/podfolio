@@ -179,12 +179,12 @@ class PFile extends File{
             this._buildMenu();
         }
         if(this._menuIsShown){
-            this._menu.exclude();
-            this._cont.exclude(false);
+            this._menu.hide();
+            this._cont.show();
             this._menuIsShown = false;
         }else{
-            this._menu.exclude(false);
-            this._cont.exclude();
+            this._menu.show();
+            this._cont.hide();
             this._menuIsShown = true;
         }
     }
@@ -348,12 +348,12 @@ class PFolder extends Folder{
             this._buildMenu();
         }
         if(this._menuIsShown){
-            this._menu.exclude();
-            this._cont.exclude(false);
+            this._menu.hide();
+            this._cont.show();
             this._menuIsShown = false;
         }else{
-            this._menu.exclude(false);
-            this._cont.exclude();
+            this._menu.show();
+            this._cont.hide();
             this._menuIsShown = true;
         }
     }

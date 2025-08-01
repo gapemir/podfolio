@@ -1,1 +1,3 @@
-after meta change make object refresh advertise and public, 
+TODO how to handle downloading, displaying, public notes??
+TODO how to handle displaying folder outside app, do we just redirect to app and open only the folder
+TODO filters, sorting, list, ...
