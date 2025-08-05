@@ -1,7 +1,10 @@
 class Application extends gn.app.App{
     constructor() {
         super();
-        this.header = new Header();
+        //this.header = new Header();
+    }
+    main(){
+        gn.locale.LocaleManager.instance().locale = "en"
     }
     get userId() {
         let userId = gn.util.Cookie.get().podfolioUserid;
