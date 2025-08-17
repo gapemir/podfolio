@@ -36,4 +36,4 @@
         echo JSON_encode(["status" => Ret::Other->value]);
         exit();
     }
-    echo JSON_encode(["status" => Ret::Ok->value]);
+    echo JSON_encode(["status" => Ret::Ok->value, "name" => $newName ]);

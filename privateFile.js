@@ -63,7 +63,7 @@ class PTileContainer extends TileContainer{
             if(data.status === 1){
                 data.file.storeid = data.file.storeid;
                 data.file.type = gn.model.Model.Type.item;
-                this.model.addData(data.file);
+                this.model.insertRow(data.file, this.model.rowCount(), data.file.parent );
             } else {
                 alert('File upload failed');
             }
@@ -91,7 +91,7 @@ class PTileContainer extends TileContainer{
             if(response.status == 1){
                 response.folder.storeid = response.folder.storeid;
                 response.folder.type = gn.model.Model.Type.group;
-                this.model.addData(response.folder);
+                this.model.insertRow(response.folder);
             }else{
                 alert("Error creating folder: " + response.message);
             }
@@ -111,7 +111,7 @@ class PTileContainer extends TileContainer{
             if(response.status == 1){
                 response.note.storeid = response.note.storeid;
                 response.note.type = gn.model.Model.Type.item;
-                this.model.addData(response.note);
+                this.model.insertRow(response.note);
             }else{
                 alert("Error creating note: " + response.message);
             }
@@ -286,7 +286,7 @@ class PFile extends File{
                 userid: gn.app.App.instance().userId
                 });
             if(data.status == 1){
-                this.layoutParent.model.changeData( this._data.storeid, "name", e.data );
+                this.layoutParent.model.changeData( this._data.storeid, "name", data.name || e.data );
             }
         }, this);
         dlg.show();
@@ -397,7 +397,7 @@ class PFolder extends Folder{
             dlg.addEventListener("yes", async function(){
                 let res = await this._deleteFolder(this._data.storeid)
                 if(res){
-                    this._parent.model.removeData(this._data.storeid)
+                    this.layoutParent.model.removeData(this._data.storeid)
                 }else{
                     console.error("Error deleting folder")
                 }

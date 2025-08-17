@@ -28,13 +28,15 @@ function rebuild(){
 
         let allItems = [ ...data.folders, ...data.notes, ...data.files ];
         allItems.forEach(el => {
+            el.display = el.name;
             if(el.mimetype){
                 el.type = gn.model.Model.Type.item;
             }else {
                 el.type = gn.model.Model.Type.group;
             }
         });
-        ROOT.model.setData(allItems)
+        ROOT.model.key = "storeid";
+        ROOT.model.setDataFromFlat(allItems, "parent")
     })
 }
 rebuild()

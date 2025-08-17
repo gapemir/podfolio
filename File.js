@@ -3,10 +3,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
         super()
         this.addClass('fileList');
         this._element.id = 'fileList';
-        this.model = new gn.model.TreeModel();
-        this._model.dataId = "storeid";
-        this._model.parentId = "parent";
-        this.model.viewId = "name";
+        this.model = new gn.model.FilterSortTreeModel( new gn.model.TreeModel() );
         this.tileClass = File;
         this.subItemContClass = Folder;
         
@@ -16,7 +13,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
         /*
         this._breadcrumb.addEventListener("back", function(){
             if(!gn.lang.Var.isNull(this._currentGroup)){
-                this.openGroup(this._model.getParent(this._currentGroup));
+                this.openGroup(this._model.parent(this._currentGroup));
             }
         }, this);*/
         this._header.add(this.breadcrumb);
@@ -102,7 +99,7 @@ class File extends gn.ui.tile.TileItem{
             contentItem.addClass( "gn-note" );
             contentItem.value = this._data.content;
             contentItem.addEventListener( "input", function( e ){
-                this.sendDataEvent( "noteChanged", { content: e.data, storeid: this._data.storeid} );
+                this.sendEvent( "noteChanged", { content: e.data, storeid: this._data.storeid} );
             }, this );  
         }
         else if(mimetype.includes("wordprocessingml") || mimetype.includes("msword") || mimetype.includes("ms-word")){
@@ -176,9 +173,9 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
 
         let headTextDiv = new gn.ui.basic.Widget(null, "div");
         this._head.add(headTextDiv)
-        let headText = new gn.ui.basic.Label(this._data.name, "", this);
-        headText.setStyle("cursor", "pointer");
-        headTextDiv.add(headText);
+        this._headText = new gn.ui.basic.Label(this._data.name, "", this);
+        this._headText.setStyle("cursor", "pointer");
+        headTextDiv.add(this._headText);
     
         this._cont = new gn.ui.basic.Widget(null, "div", "fileCont");
         this.add(this._cont);
@@ -186,10 +183,10 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
         let contentItem = new gn.ui.basic.Icon(70, "fa-folder", ["fa-regular"] )
         this._cont.add(contentItem);
     
-        headText.addEventListener("click", function(){
+        this._headText.addEventListener("click", function(){
             //window.location.href = "./data/" + userid + "/" + this._storeid + "?key=" + this._data.fileKey;
             //throw new TypeError("not yet implemented")
-            this.sendDataEvent("openGroup", this._data.storeid);
+            this.sendEvent("openGroup", this._data.storeid);
         }.bind(this));
         /*contentItem.onclick = function(){
             window.location.href = "./data/" + userid + "/" + file.storeid + "?key=" + file.fileKey;

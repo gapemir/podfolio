@@ -14,19 +14,28 @@
 <body>
     <script> 
         if(!window.location.search.includes("user=")){
-            window.location = "./userNotFound.html";
+            //window.location = "./userNotFound.html";
         }
     </script>
     <header>
         <div>Welcome to x users podfolio</div>
-        <div id="headerDummy"></div>
+        <!--<div id="headerDummy"></div>
         <div id="headerUser"><i id="headerUserUser" class="fa-solid fa-user"></i></div>
         <div id="userPopup" style="display:none;">
             <div id="logoutButton">login</div>
-        </div>
+        </div>-->
     </header>
     <div id="fileList">
+        <script>
+            function test(){}
+            let x = new gn.model.TreeModel();
+            let y = new gn.model.FilterSortTreeModel();
+            y.sourceModel = x;
+            y.sourceModel = x;
+            y.addEventListener("reset", ()=>console.log("test"))
+            x.sendEvent("reset");
+        </script>
     </div>
 </body>
-<script src="testmainPanel.js"></script>
+<!--<script src="testmainPanel.js"></script>-->
 </html>
