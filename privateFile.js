@@ -43,27 +43,37 @@ class PTileContainer extends TileContainer{
     }
 
     _uploadFile(){
-        //event.preventDefault();
         const file = this._firstItem.fileInput.value;
         if(file == undefined)
             return;
-        let formData = new FormData();
-        formData.append('file', file);
-        formData.append('userid', gn.app.App.instance().userId);
-        formData.append('fileName', this._firstItem.nameOfFile.value || file.name.replace(/\.[^/.]+$/, ""));
-        formData.append('token', gn.app.App.instance().token);
-        formData.append('parent', this._currentGroup);
-    
+
+        if( this._uploadHelper ){
+            this._uploadHelper.dispose();
+        }
+        this._uploadHelper = new gn.helper.FormDataFileUpload();
+        this._uploadHelper.addEventListener( "send", this._uploadFileCB, this );
+
+        this._uploadHelper.addField('userid', gn.app.App.instance().userId);
+        this._uploadHelper.addField('token', gn.app.App.instance().token);
+        this._uploadHelper.addField('parent', this._currentGroup);
+        this._uploadHelper.addFile( file, this._firstItem.nameOfFile.value || file.name.replace(/\.[^/.]+$/, "") );
+    }
+    _uploadFileCB( e ) {
         fetch('./php/file/upload.php', {
             method: 'POST',
-            body: formData
+            body: e.data
         }).then(response => response.json())
         .then(data => {
             console.log(data);
             if(data.status === 1){
-                data.file.storeid = data.file.storeid;
-                data.file.type = gn.model.Model.Type.item;
-                this.model.insertRow(data.file, this.model.rowCount(), data.file.parent );
+                if( !this._uploadHelper.done ) {
+                    this._uploadHelper.sendChunk();
+                }
+                if( data.file ) {
+                    data.file.storeid = data.file.storeid;
+                    data.file.type = gn.model.Model.Type.item;
+                    this.model.insertRow(data.file, this.model.rowCount(), data.file.parent );
+                }
             } else {
                 alert('File upload failed');
             }
@@ -179,12 +189,12 @@ class PFile extends File{
             this._buildMenu();
         }
         if(this._menuIsShown){
-            this._menu.hide();
+            this._menu.exclude();
             this._cont.show();
             this._menuIsShown = false;
         }else{
             this._menu.show();
-            this._cont.hide();
+            this._cont.exclude();
             this._menuIsShown = true;
         }
     }
@@ -348,12 +358,12 @@ class PFolder extends Folder{
             this._buildMenu();
         }
         if(this._menuIsShown){
-            this._menu.hide();
+            this._menu.exclude();
             this._cont.show();
             this._menuIsShown = false;
         }else{
             this._menu.show();
-            this._cont.hide();
+            this._cont.exclude();
             this._menuIsShown = true;
         }
     }

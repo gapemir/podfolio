@@ -39,6 +39,7 @@ class Application extends gn.app.App{
 class Header extends gn.ui.Header{
     constructor() {
         super({left: true, center: true, right: true});
+        this.setStyle( "text-wrap", "nowrap" )
         this.sticky = true;
         this.left.add(new gn.ui.basic.Label(this.tr("PODFOLIO")));
         this.center.add(new gn.ui.basic.Label(this.tr("YOUR_PERSONAL_PASTEBIN")));

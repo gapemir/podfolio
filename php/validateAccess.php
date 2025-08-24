@@ -1,6 +1,6 @@
 <?php
     require_once("inc.php");
-    
+
     $userid = $_GET['userid'];
     $file = $_GET['file'];
     $key = "";
@@ -35,10 +35,36 @@
         if( $row['public'] == true || $row['fileKey'] == $key) {
             $imagePath = '../data/' . $userid . '/' . $row['storeid'] . '.' . pathinfo($row['name'], PATHINFO_EXTENSION);
             if (file_exists($imagePath)) {
-                $mimeType = mime_content_type($imagePath);
-                if(!$dev) {
-                    header('Content-Type: ' . $mimeType);
-                    readfile($imagePath);
+                $mimeType = mime_content_type( $imagePath );
+                $fileSize = filesize( $imagePath );
+                if( !$dev ) {
+                    header( 'Content-Type: ' . $mimeType );
+                    header( 'Content-Length: ' . $fileSize );
+                    header( 'Content-Disposition: attachment; filename="' . basename( $row[ 'name' ] ) . '"' );
+                    header( 'X-Robots-Tag: noindex, nofollow', true );
+
+                    // Disable PHP's output buffering for direct output
+                    if ( ob_get_level() ) {
+                        ob_end_clean();
+                    }
+
+                    // Open the file for reading
+                    $handle = fopen( $imagePath, 'rb' );
+                    if ( $handle === false ) {
+                        http_response_code( 500 );
+                        echo "Could not open file.";
+                        exit();
+                    }
+
+                    // Stream the file in 1MB chunks
+                    $bufferSize = 1024 * 1024 * 64; // above any images but bellow huge files
+                    while ( !feof( $handle ) ) {
+                        echo fread( $handle, $bufferSize );
+                        flush(); // Send the output buffer to the browser
+                    }
+
+                    fclose( $handle );
+                    exit();
                 } else {
                     var_dump($imagePath);
                     var_dump($mimeType);

@@ -1,5 +1,5 @@
 let ROOT = null; // used for root tile container
-let App = gn.app.App.startup(Application); 
+let App = gn.app.App.startup( Application ); 
 
 
 function rebuild(){
@@ -29,7 +29,7 @@ function rebuild(){
         let allItems = [ ...data.folders, ...data.notes, ...data.files ];
         allItems.forEach(el => {
             el.display = el.name;
-            if(el.mimetype){
+            if(!gn.lang.Var.isNull(el.mimetype)){
                 el.type = gn.model.Model.Type.item;
             }else {
                 el.type = gn.model.Model.Type.group;
