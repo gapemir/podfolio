@@ -149,3 +149,7 @@ all take `userid` and `token` and return JSON encoded status + additional data
 `delete.php` same as `./php/file/delete.php` <br/>
 
 
+## TODO 
+- redo scroll(idealy revrite so we handle everything, horizontal scroll doesnt work sometimes)
+- redo split(events!!!)
+- new resize event on elements resizing

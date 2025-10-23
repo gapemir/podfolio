@@ -9,7 +9,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
         
         this.breadcrumb = new gn.ui.control.Breadcrumb();
         this.breadcrumb.model = this._model;
-        this.breadcrumb.topLevelName = "Content";
+        this.breadcrumb.topLevelName = "Home";
         this._header.add(this.breadcrumb);
 
         if( this._details.filter ) {

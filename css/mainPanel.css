@@ -72,6 +72,13 @@ body{
 }
 .fileHead > div{
     flex-grow: 1;
+    min-width: 0;
+}
+.fileHead label{
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+    text-overflow: ellipsis;
 }
 .fileHead span{
     text-align: center;
