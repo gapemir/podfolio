@@ -1,6 +1,6 @@
 class TileContainer extends gn.ui.tile.TileContainer{
     constructor() {
-        super()
+        super( { filter: true } )
         this.addClass('fileList');
         this._element.id = 'fileList';
         this.model = new gn.model.FilterSortTreeModel( new gn.model.TreeModel() );
@@ -10,13 +10,14 @@ class TileContainer extends gn.ui.tile.TileContainer{
         this.breadcrumb = new gn.ui.control.Breadcrumb();
         this.breadcrumb.model = this._model;
         this.breadcrumb.topLevelName = "Content";
-        /*
-        this._breadcrumb.addEventListener("back", function(){
-            if(!gn.lang.Var.isNull(this._currentGroup)){
-                this.openGroup(this._model.parent(this._currentGroup));
-            }
-        }, this);*/
         this._header.add(this.breadcrumb);
+
+        if( this._details.filter ) {
+            //TODO make gn.ui.advancedinput with filter&search item
+        }
+        if( this._details.sort ) {
+            // make gn.ui.advancedinput with sort widget, also combobox would be useful
+        }
     }
 
     genFakeTileItems(){

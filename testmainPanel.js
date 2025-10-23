@@ -20,9 +20,9 @@ function rebuild(){
             window.location.href = './index.html';
         }
         if(gn.app.App.instance().token){
-            ROOT = new PTileContainer(null);
+            ROOT = new PTileContainer();
         }else{
-            ROOT = new TileContainer(null);
+            ROOT = new TileContainer();
         }
         document.getElementById('fileList').appendChild(ROOT._element);
 
@@ -37,6 +37,8 @@ function rebuild(){
         });
         ROOT.model.key = "storeid";
         ROOT.model.setDataFromFlat(allItems, "parent")
+        //document.getElementById( "fileList" ).children[0].style.width = "400px"
     })
 }
 rebuild()
+
