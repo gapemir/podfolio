@@ -1,4 +1,4 @@
-CREATE DATABASE podfolio;
+CREATE DATABASE IF NOT EXISTS podfolio;
 USE podfolio;
 
 CREATE TABLE user(
