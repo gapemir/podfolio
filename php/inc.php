@@ -1,5 +1,10 @@
 <?php
-    require_once("env.php");
+    $host=getenv("DB_HOST");
+    $user=getenv("DB_USERNAME");
+    $password=getenv("DB_PASSWORD");
+    $db=getenv("DB_DATABASE");
+    $port=(int)getenv("DB_PORT");
+
     $conn = mysqli_connect($host, $user, $password, $db, $port);
 
     enum Ret : int{

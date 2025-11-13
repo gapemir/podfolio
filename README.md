@@ -5,23 +5,9 @@ Podfolio and new ui framework
 
 # setup
 
-for downloading folders, zip extension needs to be enabled in php, if you run docker this is the command
 ```
-RUN apt-get update && apt-get install -y libzip-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN docker-php-ext-install mysqli pdo_mysql zip \
-    && docker-php-ext-enable mysqli
-```
-make `env.php` file in php folder
-example:
-```php
-<?php
-$host="localhost";
-$user="root";
-$password="";
-$db="podfolio";
-$port="3306";
+docker build -t podfolio:latest .
+docker compose up -d
 ```
 
 make sure that `./data/`
