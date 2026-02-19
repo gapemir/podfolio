@@ -18,10 +18,10 @@
     $target_file = $target_dir . $storeid;
     $target_file = $target_file . "." . pathinfo($row["name"], PATHINFO_EXTENSION);
     
-    if ( !file_exists( $target_file ) ) {
-        echo json_encode( [ "status" => Ret::FileNotExists->value ] );
-        exit();
-    }
+    // if ( !file_exists( $target_file ) ) {
+    //     echo json_encode( [ "status" => Ret::FileNotExists->value ] );
+    //     exit();
+    // }
     $sql = "DELETE FROM file WHERE storeid = '$storeid' AND userid = '$userid'";
     if( mysqli_execute_query($conn, $sql) ) {
         unlink($target_file);

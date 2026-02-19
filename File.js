@@ -151,26 +151,24 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
         
         this._head = new gn.ui.basic.Widget(new gn.ui.layout.Row(), "div", "fileHead");
         this.add(this._head);
-        //folders are not yed downloadable, we need to construct a zip file
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
         download.tooltip = "Download";
         download.addEventListener("click", async function(){
             await this._downloadZip(this._data.storeid, this._data.name + ".zip");
         }, this);
         this._head.add(download);
-        let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
-        share.tooltip = "Share";
-        share.addEventListener("click", function(){
-            let link = /.*\//.exec(window.location)[0];
-            //navigator.clipboard.writeText(link + "download.html?user="+userid+"&file="+file.storeid+"&name="+encodeURIComponent(file.name));
-            //navigator.clipboard.writeText(link + "data/"+userid+"/"+file.storeid+"?key="+file.fileKey)
-            let name = encodeURI(this._data.name).replaceAll("%20", "+");
-            if(name.includes("%")){
-                name = this._data.storeid;
-            }
-            Application.instance().writeToClipboard(link + "data/"+ gn.app.App.instance().userId +"/"+this._data.storeid+"?key="+this._data.fileKey)
-        }, this);
-        this._head.add(share);
+        //TODO share folder
+        // let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
+        // share.tooltip = "Share";
+        // share.addEventListener("click", function(){
+        //     let link = /.*\//.exec(window.location)[0];
+        //     let name = encodeURI(this._data.name).replaceAll("%20", "+");
+        //     if(name.includes("%")){
+        //         name = this._data.storeid;
+        //     }
+        //     Application.instance().writeToClipboard(link + "data/"+ gn.app.App.instance().userId +"/"+this._data.storeid+"?key="+this._data.fileKey)
+        // }, this);
+        // this._head.add(share);
 
         let headTextDiv = new gn.ui.basic.Widget(null, "div");
         this._head.add(headTextDiv)
@@ -185,13 +183,8 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
         this._cont.add(contentItem);
     
         this._headText.addEventListener("click", function(){
-            //window.location.href = "./data/" + userid + "/" + this._storeid + "?key=" + this._data.fileKey;
-            //throw new TypeError("not yet implemented")
             this.sendEvent("openGroup", this._data.storeid);
-        }.bind(this));
-        /*contentItem.onclick = function(){
-            window.location.href = "./data/" + userid + "/" + file.storeid + "?key=" + file.fileKey;
-        };*/
+        }, this);
         contentItem.setStyle("cursor", "pointer"); 
     }
     updateItem(data, key){

@@ -229,7 +229,11 @@ class PFile extends File{
             }
         }, this);
         this._menu.add(inp2);
-        this._menu.add(new gn.ui.basic.Label("Advertise"));
+        inp2.tooltip = "NOT IMPLEMENTED YET";
+        
+        let tex2 = new gn.ui.basic.Label("Advertise")
+        tex2.tooltip = "NOT IMPLEMENTED YET";
+        this._menu.add(tex2);
 
         let del = new gn.ui.control.Button("Delete", "fileMenuButton");
         del.addEventListener("click", this._deleteFile, this);
