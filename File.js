@@ -9,7 +9,7 @@ class TileContainer extends gn.ui.tile.TileContainer{
         
         this.breadcrumb = new gn.ui.control.Breadcrumb();
         this.breadcrumb.model = this._model;
-        this.breadcrumb.topLevelName = "Home";
+        this.breadcrumb.topLevelName = this.tr("HOME");
         this._header.add(this.breadcrumb);
 
         if( this._details.filter ) {
@@ -57,13 +57,13 @@ class File extends gn.ui.tile.TileItem{
         this.add(this._head);
 
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
-        download.tooltip = "Download";
+        download.tooltip = this.tr("DOWNLOAD");
         download.addEventListener("click", function(){
             Application.instance().downloadFile("./data/" + gn.app.App.instance().userId + "/" + this._data.storeid + "?key=" + this._data.fileKey, this._data.name);
         }, this);
         this._head.add(download);
         let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
-        share.tooltip = "Share";
+        share.tooltip = this.tr("SHARE");
         share.addEventListener("click", function(){
             let link = /.*\//.exec(window.location)[0];
             let name = encodeURI(this._data.name).replaceAll("%20", "+");
@@ -152,7 +152,7 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
         this._head = new gn.ui.basic.Widget(new gn.ui.layout.Row(), "div", "fileHead");
         this.add(this._head);
         let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
-        download.tooltip = "Download";
+        download.tooltip = this.tr("DOWNLOAD");
         download.addEventListener("click", async function(){
             await this._downloadZip(this._data.storeid, this._data.name + ".zip");
         }, this);

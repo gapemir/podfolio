@@ -6,35 +6,35 @@ class PTileContainer extends TileContainer{
         
         this._firstItem = new gn.ui.basic.Widget(new gn.ui.layout.Column(), "div", "fileTile");
         let head = new gn.ui.basic.Widget(new gn.ui.layout.Row(),"div", "fileHead");
-        head.add(new gn.ui.basic.Label("Actions"));
+        head.add(new gn.ui.basic.Label(this.tr("ACTIONS")));
         this._firstItem.add(head);
 
         let cont = new gn.ui.container.Column("fileCont fileTileFirst");
-        cont.add(new gn.ui.basic.Label("Upload a file"))
+        cont.add(new gn.ui.basic.Label(this.tr("UPLOAD_A_FILE")))
         this._firstItem.fileInput = new gn.ui.input.File();
         cont.add(this._firstItem.fileInput);
         /*this._firstItem.fileInput = document.createElement("input");
         this._firstItem.fileInput.type = "file";
         cont.addNativeElement(this._firstItem.fileInput);*/
-        cont.add(new gn.ui.basic.Label("Rename file (optional):"))
+        cont.add(new gn.ui.basic.Label(this.tr("RENAME_FILE_OPTIONAL")))
 
-        this._firstItem.nameOfFile = new gn.ui.input.Line("", "file whitout extension");
+        this._firstItem.nameOfFile = new gn.ui.input.Line("", this.tr("FILE_WITHOUT_EXTENSION"));
         cont.add(this._firstItem.nameOfFile);
 
-        let but1 = new gn.ui.control.Button("Upload");
+        let but1 = new gn.ui.control.Button(this.tr("UPLOAD"));
         but1.addEventListener("click", this._uploadFile, this);
         cont.add(but1);
 
         //cont.element.appendChild(document.createElement("br"));
 
-        this._firstItem.nameOfFolder = new gn.ui.input.Line("", "name of new folder");
+        this._firstItem.nameOfFolder = new gn.ui.input.Line("", this.tr("NAME_OF_NEW_FOLDER"));
         cont.add(this._firstItem.nameOfFolder);
 
-        let but2 = new gn.ui.control.Button("New folder");
+        let but2 = new gn.ui.control.Button(this.tr("NEW_FOLDER"));
         but2.addEventListener("click", this._createNewFolder, this);
         cont.add(but2, but1);
 
-        let butNewNote = new gn.ui.control.Button("New note");
+        let butNewNote = new gn.ui.control.Button(this.tr("NEW_NOTE"));
         butNewNote.addEventListener("click", this._createNewNote, this);
         cont.add(butNewNote);
 
@@ -218,7 +218,7 @@ class PFile extends File{
             }
         }, this);
         this._menu.add(inp1);
-        this._menu.add(new gn.ui.basic.Label("Public"));
+        this._menu.add(new gn.ui.basic.Label(this.tr("PUBLIC")));
 
         let inp2 = new gn.ui.control.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
@@ -231,11 +231,11 @@ class PFile extends File{
         this._menu.add(inp2);
         inp2.tooltip = "NOT IMPLEMENTED YET";
         
-        let tex2 = new gn.ui.basic.Label("Advertise")
+        let tex2 = new gn.ui.basic.Label(this.tr("ADVERTISE"));
         tex2.tooltip = "NOT IMPLEMENTED YET";
         this._menu.add(tex2);
 
-        let del = new gn.ui.control.Button("Delete", "fileMenuButton");
+        let del = new gn.ui.control.Button(this.tr("DELETE"), "fileMenuButton");
         del.addEventListener("click", this._deleteFile, this);
         del.setStyle("grid-column", "1 / span 2");
         this._menu.add(del);
@@ -391,7 +391,7 @@ class PFolder extends Folder{
             }
         }, this);
         this._menu.add(inp1);
-        this._menu.add(new gn.ui.basic.Label("Public"));
+        this._menu.add(new gn.ui.basic.Label(this.tr("PUBLIC")));
 
         let inp2 = new gn.ui.control.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
@@ -403,11 +403,11 @@ class PFolder extends Folder{
             }
         }, this);
         this._menu.add(inp2);
-        this._menu.add(new gn.ui.basic.Label("Advertise"));
+        this._menu.add(new gn.ui.basic.Label(this.tr("ADVERTISE")));
 
-        let del = new gn.ui.control.Button("Delete", "fileMenuButton");
+        let del = new gn.ui.control.Button(this.tr("DELETE"), "fileMenuButton");
         del.addEventListener("click", async function(){
-            let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label("Delete folder"), new gn.ui.basic.Label("Are you sure you want to delete this folder?"));
+            let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label(this.tr("DELETE_FOLDER")), new gn.ui.basic.Label(this.tr("ARE_YOU_SURE_DELETE_FOLDER")));
             dlg.addEventListener("yes", async function(){
                 let res = await this._deleteFolder(this._data.storeid)
                 if(res){

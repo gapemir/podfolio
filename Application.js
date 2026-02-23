@@ -35,6 +35,11 @@ class Application extends gn.app.App{
         gn.util.Cookie.del("podfolioUserid");
         window.location.reload();
     }
+    getLocalePath() {
+        let paths = super.getLocalePath();
+        paths.push("./translations/");
+        return paths;
+    }
 }
 class Header extends gn.ui.Header{
     constructor() {
@@ -47,6 +52,7 @@ class Header extends gn.ui.Header{
         user.addEventListener("click", function () {
             if( gn.lang.Var.isNull(this._popup) ){
                 this._popup = new gn.ui.popup.Menu(user);
+                this._popup.setStyle("padding", "5px");
                 this._popup.addItem(new gn.ui.popup.MenuItem(new gn.ui.basic.Label(this.tr("LOGOUT")), new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]), function () {
                     Application.instance().logout();
                 }));

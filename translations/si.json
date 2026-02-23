@@ -1,0 +1,20 @@
+{
+    "tr":{
+        "PUBLIC" : "Javno",
+        "ADVERTISE" : "Ošlašuj",
+
+        "PODFOLIO": "Podfolio",
+        "YOUR_PERSONAL_PASTEBIN" : "Tvoja osebnia prilepna stena",
+
+        "UPLOAD_A_FILE" : "Naloži datoteko",
+        "RENAME_FILE_OPTIONAL" : "Preimenuj datoteko (neobvezno):",
+        "FILE_WITHOUT_EXTENSION" : "datoteka brez končnice",
+        "NAME_OF_NEW_FOLDER" : "ime nove mape",
+        "NEW_FOLDER" : "Nova mapa",
+        "NEW_NOTE" : "Nov zapisek",
+
+        "ACTIONS" : "Akcije",
+
+        "HOME" : "Domov"
+    }
+}

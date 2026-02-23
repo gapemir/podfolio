@@ -1,0 +1,20 @@
+{
+    "tr":{
+        "PUBLIC" : "Public",
+        "ADVERTISE" : "Advertise",
+
+        "PODFOLIO": "Podfolio",
+        "YOUR_PERSONAL_PASTEBIN" : "Your personal pastebin",
+
+        "UPLOAD_A_FILE" : "Upload a file",
+        "RENAME_FILE_OPTIONAL" : "Rename file (optional):",
+        "FILE_WITHOUT_EXTENSION" : "file without extension",
+        "NAME_OF_NEW_FOLDER" : "name of new folder",
+        "NEW_FOLDER" : "New folder",
+        "NEW_NOTE" : "New note",
+
+        "ACTIONS" : "Actions",
+
+        "HOME" : "Home"
+    }
+}

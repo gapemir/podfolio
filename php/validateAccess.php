@@ -55,7 +55,6 @@
                     // header( 'Content-Disposition: attachment; filename="' . basename( $row[ 'name' ] ) . '"' );  //INFO this makes browser try to render content, else it would download
                     header( 'X-Robots-Tag: noindex, nofollow', true );
 
-                    // Disable PHP's output buffering for direct output
                     if ( ob_get_level() ) {
                         ob_end_clean();
                     }
@@ -64,7 +63,6 @@
                         echo $row['content'];
 
                     } else {
-                        // Open the file for reading
                         $handle = fopen( $imagePath, 'rb' );
                         if ( $handle === false ) {
                             http_response_code( 500 );
@@ -73,10 +71,10 @@
                         }
 
                         // Stream the file in 1MB chunks
-                        $bufferSize = 1024 * 1024 * 64; // above any images but bellow huge files
+                        $bufferSize = 1024 * 1024 * 64;
                         while ( !feof( $handle ) ) {
                             echo fread( $handle, $bufferSize );
-                            flush(); // Send the output buffer to the browser
+                            flush();
                         }
                     }
 
