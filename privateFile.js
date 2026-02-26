@@ -247,7 +247,7 @@ class PFile extends File{
     }
     async _changeContentMeta(storeid, data) { 
         let res_data = null;
-        res_data = await gn.app.App.instance().phpRequestJ('./php/' + this._contentType() + '/changeMeta.php', {
+        res_data = await gn.app.App.instance().requestJ('./php/' + this._contentType() + '/changeMeta.php', {
             storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
@@ -258,7 +258,7 @@ class PFile extends File{
     async _deleteFile(e) {
         let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label(this.tr("DELETE")), new gn.ui.basic.Label("Are you sure you want to delete this file?"));
             dlg.addEventListener("yes", async function(){
-                let data = await gn.app.App.instance().phpRequestJ("./php/" + this._contentType() + "/delete.php", {
+                let data = await gn.app.App.instance().requestJ("./php/" + this._contentType() + "/delete.php", {
                     storeid: this._data.storeid,
                     token: gn.app.App.instance().token,
                     userid: gn.app.App.instance().userId
@@ -279,7 +279,7 @@ class PFile extends File{
         this._data.content = e.data.content;
     }
     async _saveNoteChanged(){
-        let data = await gn.app.App.instance().phpRequestJ('./php/note/change.php', {
+        let data = await gn.app.App.instance().requestJ('./php/note/change.php', {
             storeid: this._data.storeid,
             content: this._data.content,
             token: gn.app.App.instance().token,
@@ -293,7 +293,7 @@ class PFile extends File{
             return this._body._children[0].value;
         }
         dlg.addEventListener("ok", async function(e){
-            let data = await gn.app.App.instance().phpRequestJ("./php/"+this._contentType()+"/rename.php", {
+            let data = await gn.app.App.instance().requestJ("./php/"+this._contentType()+"/rename.php", {
                 storeid: this._data.storeid,
                 newname: e.data,
                 token: gn.app.App.instance().token,
@@ -424,7 +424,7 @@ class PFolder extends Folder{
         this.add(this._menu);
     }
     async _changeFolderMeta(storeid, data) {
-        let res_data = await gn.app.App.instance().phpRequestJ('./php/folder/changeMeta.php', {
+        let res_data = await gn.app.App.instance().requestJ('./php/folder/changeMeta.php', {
             storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
@@ -433,7 +433,7 @@ class PFolder extends Folder{
         return res_data.status == 1;
     }
     async _deleteFolder(storeid) {
-        let data = await gn.app.App.instance().phpRequestJ('./php/folder/delete.php', {
+        let data = await gn.app.App.instance().requestJ('./php/folder/delete.php', {
             storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId
@@ -446,7 +446,7 @@ class PFolder extends Folder{
             return this._body._children[0].value;
         }
         dlg.addEventListener("ok", async function(e){
-            let data = await gn.app.App.instance().phpRequestJ("./php/folder/rename.php", {
+            let data = await gn.app.App.instance().requestJ("./php/folder/rename.php", {
                 storeid: this._data.storeid,
                 newname: e.data,
                 token: gn.app.App.instance().token,
