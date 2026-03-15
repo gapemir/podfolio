@@ -24,13 +24,7 @@ function rebuild(){
         }else{
             ROOT = new TileContainer();
         }
-        ROOT.height = "initial";
-        var scroll = new gn.ui.container.Scroll(ROOT);
-        scroll.setStyle("width", "100%");
-        scroll.setStyle("height", "calc(100% - 60px)");
-        document.getElementById('fileList').appendChild(scroll._element);
-        // ROOT.setStyle("width", "100%");
-        // ROOT.setStyle("height", "calc(100% - 60px)");
+        App.root = ROOT; //TODO make a window and window manager, for now this is root
 
         let allItems = [ ...data.folders, ...data.notes, ...data.files ];
         allItems.forEach(el => {
@@ -43,7 +37,6 @@ function rebuild(){
         });
         ROOT.model.key = "storeid";
         ROOT.model.setDataFromFlat(allItems, "parent")
-        //document.getElementById( "fileList" ).children[0].style.width = "400px"
     })
 }
 rebuild()

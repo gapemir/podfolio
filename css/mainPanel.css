@@ -50,12 +50,16 @@ body{
     border: 1px solid black;
 }
 
+.fileList > div > .body {
+    max-width: 100%;
+}
 
 .fileTile{
     border: 1px solid #000;
     height: 350px;
     flex-basis: 350px;
     flex-grow: 1;
+    flex-shrink: 1;
     border-radius: 5px;
 }
 .fileHead{

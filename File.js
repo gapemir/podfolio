@@ -2,7 +2,6 @@ class TileContainer extends gn.ui.tile.TileContainer{
     constructor() {
         super( { filter: true } )
         this.addClass('fileList');
-        this._element.id = 'fileList';
         this.model = new gn.model.FilterSortTreeModel( new gn.model.TreeModel() );
         this.tileClass = File;
         this.subItemContClass = Folder;
