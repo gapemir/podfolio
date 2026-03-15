@@ -24,7 +24,13 @@ function rebuild(){
         }else{
             ROOT = new TileContainer();
         }
-        document.getElementById('fileList').appendChild(ROOT._element);
+        ROOT.height = "initial";
+        var scroll = new gn.ui.container.Scroll(ROOT);
+        scroll.setStyle("width", "100%");
+        scroll.setStyle("height", "calc(100% - 60px)");
+        document.getElementById('fileList').appendChild(scroll._element);
+        // ROOT.setStyle("width", "100%");
+        // ROOT.setStyle("height", "calc(100% - 60px)");
 
         let allItems = [ ...data.folders, ...data.notes, ...data.files ];
         allItems.forEach(el => {
