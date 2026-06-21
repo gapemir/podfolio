@@ -41,7 +41,24 @@ class PTileContainer extends TileContainer{
         this._firstItem.add(cont);
         this.add(this._firstItem);
     }
-
+    _itemCreated(item){
+        super._itemCreated(item);
+        item.addEventListener("changeData", function(event) {
+            this.model.changeData(event.data.index, event.data.key, event.data.value);
+        }, this);
+        item.addEventListener("removeData", function(event) {
+            this.model.removeData(event.data);
+        }, this);
+    }
+    _groupCreated(group){
+        super._groupCreated(group);
+        group.addEventListener("changeData", function(event) {
+            this.model.changeData(event.data.index, event.data.key, event.data.value);
+        }, this);
+        group.addEventListener("removeData", function(event) {
+            this.model.removeData(event.data);
+        }, this);
+    }
     _uploadFile(){
         const file = this._firstItem.fileInput.value;
         if(file == undefined)
@@ -73,6 +90,7 @@ class PTileContainer extends TileContainer{
                     data.file.storeid = data.file.storeid;
                     data.file.type = gn.model.Model.Type.item;
                     this.model.insertRow(data.file, this.model.rowCount(), data.file.parent );
+                    gn.ui.popup.Popup.InformationPopup(this.tr("FILE_SUCCESSFULLY_UPLOADED")).show();
                 }
             } else {
                 alert('File upload failed');
@@ -97,7 +115,7 @@ class PTileContainer extends TileContainer{
                 parent : this._currentGroup
             })
         }).then(response => response.json())
-        .then(response=>{
+        .then(response => {
             if(response.status == 1){
                 response.folder.storeid = response.folder.storeid;
                 response.folder.type = gn.model.Model.Type.group;
@@ -209,10 +227,9 @@ class PFile extends File{
         this._menu.setStyle("align-items", "center");
 
         let inp1 = new gn.ui.control.Switch(this._data.public);
-        inp1.addEventListener("change", async function(){
-            if(await this._changeContentMeta(this._data.storeid, ["public", inp1.value])){
-                this.layoutParent.model.changeData( this._data.storeid, "public", inp1.value );
-                //this._data.public = inp1.value;
+        inp1.addEventListener("change", async function() {
+            if(await this._changeContentMeta(this._data.storeid, ["public", inp1.value])) {
+                this.sendEvent("changeData", {index: this._data.storeid, key: "public", value: inp1.value})
             }else{
                 console.error("Error changing meta data")
             }
@@ -223,7 +240,7 @@ class PFile extends File{
         let inp2 = new gn.ui.control.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
             if(await this._changeContentMeta(this._data.storeid, ["advertise", inp2.value])){
-                this.layoutParent.model.changeData( this._data.storeid, "advertise", inp2.value );
+                this.sendEvent("changeData", {index: this._data.storeid, key: "advertise", value: inp2.value})
             }else{
                 console.error("Error changing meta data")
             }
@@ -256,7 +273,7 @@ class PFile extends File{
         return res_data.status == 1;
     }
     async _deleteFile(e) {
-        let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label(this.tr("DELETE")), new gn.ui.basic.Label("Are you sure you want to delete this file?"));
+        let dlg = gn.ui.popup.Popup.ConfirmationPopup(this.tr("DELETE"), this.tr("YOU_SURE_YOU_WANT_TO_DELETE_THIS_FILE"));
             dlg.addEventListener("yes", async function(){
                 let data = await gn.app.App.instance().requestJ("./php/" + this._contentType() + "/delete.php", {
                     storeid: this._data.storeid,
@@ -264,7 +281,7 @@ class PFile extends File{
                     userid: gn.app.App.instance().userId
                 });
                 if(data.status == 1){
-                    this.layoutParent.model.removeData(this._data.storeid)
+                    this.sendEvent("removeData", this._data.storeid);
                 }    
             }, this);
         dlg.show();
@@ -288,7 +305,7 @@ class PFile extends File{
         return data.status == 1;
     }
     async _rename(e) {
-        let dlg = gn.ui.popup.Popup.InformationPopup(new gn.ui.basic.Label(this.tr("RENAME")),new gn.ui.input.Line("", this.tr("NEW NAME")));
+        let dlg = gn.ui.popup.Popup.InformationPopup(this.tr("RENAME"), new gn.ui.input.Line("", this.tr("NEW NAME")));
         dlg.callback = function(){
             return this._body._children[0].value;
         }
@@ -300,7 +317,7 @@ class PFile extends File{
                 userid: gn.app.App.instance().userId
                 });
             if(data.status == 1){
-                this.layoutParent.model.changeData( this._data.storeid, "name", data.name || e.data );
+                this.sendEvent("changeData", {index: this._data.storeid, key: "name", value: data.name || e.data})
             }
         }, this);
         dlg.show();
@@ -385,7 +402,7 @@ class PFolder extends Folder{
         inp1.addEventListener("change", async function(){
             let ret = await this._changeFolderMeta(this._data.storeid, ["public", inp1.value]);
             if(ret){
-                this.layoutParent.model.changeData( this._data.storeid, "public", inp1.value );
+                this.sendEvent("changeData", {index: this._data.storeid, key: "public", value: inp1.value})
             }else{
                 console.error("Error changing meta data")
             }
@@ -397,7 +414,7 @@ class PFolder extends Folder{
         inp2.addEventListener("change", async function(){
             let ret = await this._changeFolderMeta(this._data.storeid, ["advertise", inp2.value]);
             if(ret){
-                this.layoutParent.model.changeData( this._data.storeid, "advertise", inp2.value );
+                this.sendEvent("changeData", {index: this._data.storeid, key: "advertise", value: inp2.value})
             }else{
                 console.error("Error changing meta data")
             }
@@ -407,11 +424,11 @@ class PFolder extends Folder{
 
         let del = new gn.ui.control.Button(this.tr("DELETE"), "fileMenuButton");
         del.addEventListener("click", async function(){
-            let dlg = gn.ui.popup.Popup.ConfirmationPopup(new gn.ui.basic.Label(this.tr("DELETE_FOLDER")), new gn.ui.basic.Label(this.tr("ARE_YOU_SURE_DELETE_FOLDER")));
+            let dlg = gn.ui.popup.Popup.ConfirmationPopup(this.tr("DELETE_FOLDER"), this.tr("ARE_YOU_SURE_DELETE_FOLDER"));
             dlg.addEventListener("yes", async function(){
                 let res = await this._deleteFolder(this._data.storeid)
                 if(res){
-                    this.layoutParent.model.removeData(this._data.storeid)
+                    this.sendEvent("removeData", this._data.storeid)
                 }else{
                     console.error("Error deleting folder")
                 }
@@ -441,7 +458,7 @@ class PFolder extends Folder{
         return data.status == 1;
     }
     async _renameFolder(e) {
-        let dlg = gn.ui.popup.Popup.InformationPopup(new gn.ui.basic.Label(this.tr("RENAME_FOLDER")),new gn.ui.input.Line("", this.tr("NEW_NAME")));
+        let dlg = gn.ui.popup.Popup.InformationPopup(this.tr("RENAME_FOLDER"), new gn.ui.input.Line("", this.tr("NEW_NAME")));
         dlg.callback = function(){
             return this._body._children[0].value;
         }
@@ -453,7 +470,7 @@ class PFolder extends Folder{
                 userid: gn.app.App.instance().userId
                 });
             if(data.status == 1){
-                this.layoutParent.model.changeData( this._data.storeid, "name", e.data );
+                this.sendEvent("changeData", {index: this._data.storeid, key: "name", value: e.data})
             }
         }, this);
         dlg.show();
