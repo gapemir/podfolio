@@ -84,44 +84,36 @@ class File extends gn.ui.tile.TileItem{
 
         let contentItem = null;
         let mimetype = this._data.mimetype;
-        if(mimetype.includes("image/")){
+        const mimeIconMap = [
+            { keys: ["image/"], icon: "fa-file-image" },
+            { keys: ["pdf"], icon: "fa-file-pdf" },
+            { keys: ["text/"], icon: "fa-file-lines" },
+            { keys: ["wordprocessingml", "msword", "ms-word", "opendocument.text", "odt"], icon: "fa-file-word" },
+            { keys: ["spreadsheetml", "excel", "opendocument.spreadsheet", "ods"], icon: "fa-file-excel" },
+            { keys: ["presentationml", "powerpoint", "opendocument.presentation", "odp"], icon: "fa-file-powerpoint" },
+            { keys: ["application/zip", "compressed"], icon: "fa-file-zipper" },
+            { keys: ["audio/"], icon: "fa-file-audio" },
+            { keys: ["video/"], icon: "fa-file-video" }
+        ];
+
+        if (mimetype.includes("image/")) {
             let src = "./data/" + gn.app.App.instance().userId + "/" + this._data.storeid + "?key=" + this._data.fileKey;
             contentItem = new gn.ui.basic.Image(src, "fileImage");
-        }
-        else if(mimetype.includes("pdf")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-pdf", ["fa-regular"] );
-        }
-        else if(mimetype.includes("text/")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-lines", ["fa-regular"] );
-        }
-        else if (mimetype.includes("gn-note/")){
+        } 
+        else if (mimetype.includes("gn-note/")) {
             contentItem = new gn.ui.input.MultiLine();
-            contentItem.addClass( "gn-note" );
+            contentItem.addClass("gn-note");
             contentItem.value = this._data.content;
-            contentItem.addEventListener( "input", function( e ){
-                this.sendEvent( "noteChanged", { content: e.data, storeid: this._data.storeid} );
-            }, this );  
-        }
-        else if(mimetype.includes("wordprocessingml") || mimetype.includes("msword") || mimetype.includes("ms-word")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-word", ["fa-regular"] );
-        }
-        else if(mimetype.includes("spreadsheetml") || mimetype.includes("excel")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-excel", ["fa-regular"] );
-        }
-        else if(mimetype.includes("presentationml") || mimetype.includes("powerpoint")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-powerpoint", ["fa-regular"] );
-        }
-        else if(mimetype.includes("application/zip")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-zipper", ["fa-regular"] );
-        }
-        else if(mimetype.includes("audio/")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-audio", ["fa-regular"] );
-        }
-        else if(mimetype.includes("video/")){
-            contentItem = new gn.ui.basic.Icon(70, "fa-file-video", ["fa-regular"] );
-        }
+            contentItem.addEventListener("input", function(e) {
+                this.sendEvent("noteChanged", { content: e.data, storeid: this._data.storeid });
+            }, this);  
+        } 
         else {
-            contentItem = new gn.ui.basic.Icon(70, "fa-file", ["fa-regular"] );
+            const match = mimeIconMap.find(item => item.keys.some(key => mimetype.includes(key)));
+            
+            // Use the matched icon, or default to a generic file icon
+            const iconName = match ? match.icon : "fa-file";
+            contentItem = new gn.ui.basic.Icon(70, iconName, ["fa-regular"]);
         }
         this._cont.add(contentItem);
 

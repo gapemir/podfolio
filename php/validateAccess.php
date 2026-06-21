@@ -14,8 +14,6 @@
             $dev = true;
     }
 
-    //$sql = "SELECT storeid, name, public, fileKey FROM file WHERE name = '$file' OR storeid = '$file'";
-
 
     $sql = "SELECT storeid, name, public, fileKey, mimeType, '__EMPTY__' AS content FROM file WHERE name = '$file' OR storeid = '$file'
         UNION
@@ -52,6 +50,7 @@
 
                     header( 'Content-Type: ' . $mimeType );
                     header( 'Content-Length: ' . $fileSize );
+                    header( 'Content-Disposition: inline; filename="' . basename( $row['name'] ) . '"' );
                     // header( 'Content-Disposition: attachment; filename="' . basename( $row[ 'name' ] ) . '"' );  //INFO this makes browser try to render content, else it would download
                     header( 'X-Robots-Tag: noindex, nofollow', true );
 
