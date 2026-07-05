@@ -226,7 +226,7 @@ class PFile extends File{
         this._menu.setStyle("align-content", "center");
         this._menu.setStyle("align-items", "center");
 
-        let inp1 = new gn.ui.control.Switch(this._data.public);
+        let inp1 = new gn.ui.input.Switch(this._data.public);
         inp1.addEventListener("change", async function() {
             if(await this._changeContentMeta(this._data.storeid, ["public", inp1.value])) {
                 this.sendEvent("changeData", {index: this._data.storeid, key: "public", value: inp1.value})
@@ -237,7 +237,7 @@ class PFile extends File{
         this._menu.add(inp1);
         this._menu.add(new gn.ui.basic.Label(this.tr("PUBLIC")));
 
-        let inp2 = new gn.ui.control.Switch(this._data.advertise);
+        let inp2 = new gn.ui.input.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
             if(await this._changeContentMeta(this._data.storeid, ["advertise", inp2.value])){
                 this.sendEvent("changeData", {index: this._data.storeid, key: "advertise", value: inp2.value})
@@ -398,7 +398,7 @@ class PFolder extends Folder{
         this._menu.setStyle("align-content", "center");
         this._menu.setStyle("align-items", "center");
 
-        let inp1 = new gn.ui.control.Switch(this._data.public);
+        let inp1 = new gn.ui.input.Switch(this._data.public);
         inp1.addEventListener("change", async function(){
             let ret = await this._changeFolderMeta(this._data.storeid, ["public", inp1.value]);
             if(ret){
@@ -410,7 +410,7 @@ class PFolder extends Folder{
         this._menu.add(inp1);
         this._menu.add(new gn.ui.basic.Label(this.tr("PUBLIC")));
 
-        let inp2 = new gn.ui.control.Switch(this._data.advertise);
+        let inp2 = new gn.ui.input.Switch(this._data.advertise);
         inp2.addEventListener("change", async function(){
             let ret = await this._changeFolderMeta(this._data.storeid, ["advertise", inp2.value]);
             if(ret){
