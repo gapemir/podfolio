@@ -13,9 +13,6 @@ class PTileContainer extends TileContainer{
         cont.add(new gn.ui.basic.Label(this.tr("UPLOAD_A_FILE")))
         this._firstItem.fileInput = new gn.ui.input.File();
         cont.add(this._firstItem.fileInput);
-        /*this._firstItem.fileInput = document.createElement("input");
-        this._firstItem.fileInput.type = "file";
-        cont.addNativeElement(this._firstItem.fileInput);*/
         cont.add(new gn.ui.basic.Label(this.tr("RENAME_FILE_OPTIONAL")))
 
         this._firstItem.nameOfFile = new gn.ui.input.Line("", this.tr("FILE_WITHOUT_EXTENSION"));
@@ -24,8 +21,6 @@ class PTileContainer extends TileContainer{
         let but1 = new gn.ui.control.Button(this.tr("UPLOAD"));
         but1.addEventListener("click", this._uploadFile, this);
         cont.add(but1);
-
-        //cont.element.appendChild(document.createElement("br"));
 
         this._firstItem.nameOfFolder = new gn.ui.input.Line("", this.tr("NAME_OF_NEW_FOLDER"));
         cont.add(this._firstItem.nameOfFolder);
@@ -60,8 +55,8 @@ class PTileContainer extends TileContainer{
         }, this);
     }
     _uploadFile(){
-        const file = this._firstItem.fileInput.value;
-        if(file == undefined)
+        const files = this._firstItem.fileInput.value;
+        if(files === undefined || files.length == 0)
             return;
 
         if( this._uploadHelper ){
@@ -73,9 +68,10 @@ class PTileContainer extends TileContainer{
         this._uploadHelper.addField('userid', gn.app.App.instance().userId);
         this._uploadHelper.addField('token', gn.app.App.instance().token);
         this._uploadHelper.addField('parent', this._currentGroup);
-        this._uploadHelper.addFile( file, this._firstItem.nameOfFile.value || file.name.replace(/\.[^/.]+$/, "") );
+        this._uploadHelper.addFile( files[0], this._firstItem.nameOfFile.value || files[0].name.replace(/\.[^/.]+$/, "") );
+        gn.app.App.instance().header.progress.end = this._uploadHelper.allChunks;
     }
-    _uploadFileCB( e ) {
+    async _uploadFileCB( e ) {
         fetch('./php/file/upload.php', {
             method: 'POST',
             body: e.data
@@ -83,10 +79,13 @@ class PTileContainer extends TileContainer{
         .then(data => {
             console.log(data);
             if(data.status === 1){
-                if( !this._uploadHelper.done ) {
+                if(!this._uploadHelper.done) {
+                    gn.app.App.instance().header.progress.value = this._uploadHelper.currentIdx;
                     this._uploadHelper.sendChunk();
                 }
-                if( data.file ) {
+                if(data.file) {
+                    gn.app.App.instance().header.progress.value = 0;
+                    gn.app.App.instance().header.progress.end = 100;
                     data.file.storeid = data.file.storeid;
                     data.file.type = gn.model.Model.Type.item;
                     this.model.insertRow(data.file, this.model.rowCount(), data.file.parent );
@@ -95,55 +94,42 @@ class PTileContainer extends TileContainer{
             } else {
                 alert('File upload failed');
             }
-        })/*.catch(error => {
-            console.error('Error:', error);
-            alert('File upload failed');
-        });*/
+        });
     }
-    _createNewFolder(){
+    async _createNewFolder(){
         let folderName = this._firstItem.nameOfFolder.value;
         if(folderName == ""){
             alert("Folder name cannot be empty");
             return;
         }
-        fetch('./php/folder/create.php', {
-            method: 'POST',
-            body: JSON.stringify({
-                token: gn.app.App.instance().token,
-                userid: gn.app.App.instance().userId,
-                name: folderName,
-                parent : this._currentGroup
-            })
-        }).then(response => response.json())
-        .then(response => {
-            if(response.status == 1){
-                response.folder.storeid = response.folder.storeid;
-                response.folder.type = gn.model.Model.Type.group;
-                this.model.insertRow(response.folder);
-            }else{
-                alert("Error creating folder: " + response.message);
-            }
-        })
+        let resp = await gn.app.App.requestJ("./php/folder/create.php", {
+            token: gn.app.App.instance().token,
+            userid: gn.app.App.instance().userId,
+            name: folderName,
+            parent : this._currentGroup
+        });
+        if(resp.status == 1){
+            resp.folder.storeid = resp.folder.storeid;
+            resp.folder.type = gn.model.Model.Type.group;
+            this.model.insertRow(resp.folder);
+        } else {
+            alert("Error creating folder: " + resp.message);
+        }
     }
-    _createNewNote(){
-        fetch('./php/note/create.php', {
-            method: 'POST',
-            body: JSON.stringify({
-                token: gn.app.App.instance().token,
-                userid: gn.app.App.instance().userId,
-                parent : this._currentGroup
-            })
-        }).then(response => response.json())
-        .then(response=>{
-            console.log(response)
-            if(response.status == 1){
-                response.note.storeid = response.note.storeid;
-                response.note.type = gn.model.Model.Type.item;
-                this.model.insertRow(response.note);
-            }else{
-                alert("Error creating note: " + response.message);
-            }
-        })
+    async _createNewNote() {
+        let resp = await gn.app.App.requestJ("./php/note/create.php", {
+            token: gn.app.App.instance().token,
+            userid: gn.app.App.instance().userId,
+            parent : this._currentGroup
+        });
+        if(resp.status == 1){
+            resp.note.storeid = resp.note.storeid;
+            resp.note.type = gn.model.Model.Type.item;
+            this.model.insertRow(resp.note);
+        } else {
+            alert("Error creating note: " + resp.message);
+        }
+
     }
 }
 class PFile extends File{
@@ -218,10 +204,7 @@ class PFile extends File{
     }
     _buildMenu(){
         this._menuIsShown = false;
-        this._menu = new gn.ui.container.Grid("fileMenu");
-        this._menu.layoutManager.templateColumns = "50px 1fr";
-        this._menu.layoutManager.templateRows = "repeat(3, 35px)";
-        this._menu.layoutManager.gap = "10px";
+        this._menu = new gn.ui.container.Grid("fileMenu", 10, "50px 1fr", "rep");gn.ui.container.Grid
         this._menu.setStyle("width", "fit-content");
         this._menu.setStyle("align-content", "center");
         this._menu.setStyle("align-items", "center");
@@ -252,8 +235,7 @@ class PFile extends File{
         tex2.tooltip = "NOT IMPLEMENTED YET";
         this._menu.add(tex2);
 
-        let del = new gn.ui.control.Button(this.tr("DELETE"), "fileMenuButton");
-        del.addEventListener("click", this._deleteFile, this);
+        let del = new gn.ui.control.Button(this.tr("DELETE"), "fileMenuButton", this._deleteFile, this);
         del.setStyle("grid-column", "1 / span 2");
         this._menu.add(del);
 
@@ -264,7 +246,7 @@ class PFile extends File{
     }
     async _changeContentMeta(storeid, data) { 
         let res_data = null;
-        res_data = await gn.app.App.instance().requestJ('./php/' + this._contentType() + '/changeMeta.php', {
+        res_data = await gn.app.App.requestJ('./php/' + this._contentType() + '/changeMeta.php', {
             storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
@@ -275,7 +257,7 @@ class PFile extends File{
     async _deleteFile(e) {
         let dlg = gn.ui.popup.Popup.ConfirmationPopup(this.tr("DELETE"), this.tr("YOU_SURE_YOU_WANT_TO_DELETE_THIS_FILE"));
             dlg.addEventListener("yes", async function(){
-                let data = await gn.app.App.instance().requestJ("./php/" + this._contentType() + "/delete.php", {
+                let data = await gn.app.App.requestJ("./php/" + this._contentType() + "/delete.php", {
                     storeid: this._data.storeid,
                     token: gn.app.App.instance().token,
                     userid: gn.app.App.instance().userId
@@ -296,7 +278,7 @@ class PFile extends File{
         this._data.content = e.data.content;
     }
     async _saveNoteChanged(){
-        let data = await gn.app.App.instance().requestJ('./php/note/change.php', {
+        let data = await gn.app.App.requestJ('./php/note/change.php', {
             storeid: this._data.storeid,
             content: this._data.content,
             token: gn.app.App.instance().token,
@@ -310,7 +292,7 @@ class PFile extends File{
             return this._body._children[0].value;
         }
         dlg.addEventListener("ok", async function(e){
-            let data = await gn.app.App.instance().requestJ("./php/"+this._contentType()+"/rename.php", {
+            let data = await gn.app.App.requestJ("./php/"+this._contentType()+"/rename.php", {
                 storeid: this._data.storeid,
                 newname: e.data,
                 token: gn.app.App.instance().token,
@@ -390,10 +372,7 @@ class PFolder extends Folder{
     }
     _buildMenu(){
         this._menuIsShown = false;
-        this._menu = new gn.ui.container.Grid("fileMenu");
-        this._menu.layoutManager.templateColumns = "50px 1fr";
-        this._menu.layoutManager.templateRows = "repeat(3, 35px)";
-        this._menu.layoutManager.gap = "10px";
+        this._menu = new gn.ui.container.Grid("fileMenu", 10, "50px 1fr", "repeat(3, 35px)");
         this._menu.setStyle("width", "fit-content");
         this._menu.setStyle("align-content", "center");
         this._menu.setStyle("align-items", "center");
@@ -441,7 +420,7 @@ class PFolder extends Folder{
         this.add(this._menu);
     }
     async _changeFolderMeta(storeid, data) {
-        let res_data = await gn.app.App.instance().requestJ('./php/folder/changeMeta.php', {
+        let res_data = await gn.app.App.requestJ('./php/folder/changeMeta.php', {
             storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
@@ -450,7 +429,7 @@ class PFolder extends Folder{
         return res_data.status == 1;
     }
     async _deleteFolder(storeid) {
-        let data = await gn.app.App.instance().requestJ('./php/folder/delete.php', {
+        let data = await gn.app.App.requestJ('./php/folder/delete.php', {
             storeid: storeid,
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId
@@ -463,7 +442,7 @@ class PFolder extends Folder{
             return this._body._children[0].value;
         }
         dlg.addEventListener("ok", async function(e){
-            let data = await gn.app.App.instance().requestJ("./php/folder/rename.php", {
+            let data = await gn.app.App.requestJ("./php/folder/rename.php", {
                 storeid: this._data.storeid,
                 newname: e.data,
                 token: gn.app.App.instance().token,

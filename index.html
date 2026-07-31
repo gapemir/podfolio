@@ -3,85 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/index.css">
-    <script src="./gn/gn.js"></script>
-    <link rel="stylesheet" href="./gn/css/gn.css">
-    <link rel="stylesheet" href="./gn/css/font-awesome/all.css">
     <title>Welcome to Podfolio</title>
+    <link rel="stylesheet" href="./gn/css/gn.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./gn/css/font-awesome/all.css">
+    <script src="./gn/gn.js"></script>
+    <script src="./File.js"></script>
+    <script src="./privateFile.js"></script>
+    <script src="./Application.js"></script>
 </head>
 <body>
-    <h1>welcome to Podfolio</h1>
-    <div id="formDiv">
-        <div>
-            <h3>LOGIN</h3>
-            <input type="text" id="username" name="username" placeholder="Username/email" required>
-            <input type="password" id="password" name="password" placeholder="Password" required>
-            <a id="forgotPassword">Forgot Password</a><br>
-            <button id="regLogin">Login</button>
-            <button id="regSwitch1">Register</button>
-        </div>
-        <div hidden="true">
-            <h3>REGISTER</h3>
-            <input type="text" id="regUsername" name="username" placeholder="Username" required>
-            <input type="email" id="regEmail" name="regEmail" placeholder="Email" required>
-            <input type="password" id="regPassword" name="regPassword" placeholder="Password" required>
-            <button id="regButton">Register</button>
-            <button id="regSwitch2">Login</button>
-        </div>
-    </div>
+    <script src="testmainPanel.js"></script>
     <script>
-        document.getElementById('regButton').addEventListener('click', function(){
-            fetch('./php/user/register.php', {
+        let wasLoggedIn = document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid') || cookie.includes('podfolioToken') ) !== undefined;
+        if(wasLoggedIn) {
+            let tmpuserid = document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid')).split('=')[1];
+            let tmptoken = document.cookie.split(';').find(cookie => cookie.includes('podfolioToken')).split('=')[1];
+            fetch('./php/user/verify.php', {
                 method: 'POST',
                 body: JSON.stringify({
-                    username: document.getElementById('regUsername').value,
-                    email: document.getElementById('regEmail').value,
-                    password: document.getElementById('regPassword').value
+                    userid: tmpuserid,
+                    token: tmptoken
                 })
             }).then(response => response.json())
-            .then(data => {
-                console.log(data);
-                if(data.status === 1){
-                    document.cookie = `podfolioUserid=${data.userid}; path=/`;
-                    document.cookie = `podfolioToken=${data.token}; path=/`;
-                    window.location.href = './mainPanel.html';
-                }
-                else if(data.status === -4){
-                    alert("username already exists");
-                }
-                else{
-                    console.log("something went wrong with registration");
-                }
-            });
-        });
-        document.getElementById('regLogin').addEventListener('click', function(){
-            fetch('./php/user/login.php', {
-                method: 'POST',
-                body: JSON.stringify({
-                    username: document.getElementById('username').value,
-                    password: document.getElementById('password').value
-                })
-            }).then(response => response.json())
-            .then(data => {
-                console.log(data);
-                if(data.status === 1){
-                    document.cookie = `podfolioUserid=${data.userid}; path=/`;
-                    document.cookie = `podfolioToken=${data.token}; path=/`;
-                    window.location.href = './mainPanel.html';
-                }
-                else if(data.status === -2){
-                    console.log("Username or password wrong");
-                }
-            });
-        });
-        document.getElementById("regSwitch1").addEventListener("click", function(){
-            document.getElementById("formDiv").children[0].hidden = true;
-            document.getElementById("formDiv").children[1].hidden = false;
-        });
-        document.getElementById("regSwitch2").addEventListener("click", function(){
-            document.getElementById("formDiv").children[0].hidden = false;
-            document.getElementById("formDiv").children[1].hidden = true;
-        });
+                .then(data => {
+                    console.log(data);
+                    if (data.status === 1) {
+                        console.log("user is verified");
+                        gn.app.App.instance().state = pod.appState.LOGGEDIN;
+                        gn.app.App.instance().root.activate("mainWindow")
+                    }
+                    else {
+                        console.log("user is not verified");
+                    }
+                });
+        }
     </script>
+    
 </body>
 </html>

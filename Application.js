@@ -1,8 +1,9 @@
-class Application extends gn.app.App{
+class Application extends gn.app.App {
     constructor() {
         super();
+        this._state = pod.appState.UNDEFINED;
     }
-    main(){
+    main() {
         super.main();
         gn.locale.LocaleManager.instance().locale = "en"
         this.header = new Header();
@@ -17,6 +18,12 @@ class Application extends gn.app.App{
     get token() {
         let token = gn.util.Cookie.get().podfolioToken;
         return token 
+    }
+    get state() {
+        return this._state;
+    }
+    set state(value) {
+        this._state = value;
     }
     downloadFile(href, name = "download") {
         const link = document.createElement('a');
@@ -53,11 +60,12 @@ class Header extends gn.ui.Header{
             if( gn.lang.Var.isNull(this._popup) ){
                 this._popup = new gn.ui.control.Menu(user);
                 this._popup.setStyle("padding", "5px");
-                this._popup.addItem(new gn.ui.control.MenuItem(new gn.ui.basic.Label(this.tr("LOGOUT")), new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]), function () {
-                    Application.instance().logout();
+                this._popup.addItem(new gn.ui.control.MenuItem("logout", new gn.ui.basic.Label(this.tr("LOGOUT")), new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]), function () {
+                    gn.app.App.instance().logout();
                 }));
-                this._popup.addItem(new gn.ui.control.MenuItem(new gn.ui.basic.Label(this.tr("MY_PUBLIC_PAGE")), new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]), function () {
-                    window.location.href = "./public.html?user=" + Application.instance().userId;
+                this._popup.addItem(new gn.ui.control.MenuItem("public_page", new gn.ui.basic.Label(this.tr("MY_PUBLIC_PAGE")), new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]), function () {
+                    // window.location.href = "./public.html?user=" + gn.app.App.instance().userId;
+                    alert("soon :)")
                 }));
             }
             this._popup.show(); 
@@ -66,3 +74,10 @@ class Header extends gn.ui.Header{
         
     }
 }
+
+var pod = {};
+pod.appState = gn.lang.Enum({
+    UNDEFINED: 0,
+    LOGGEDIN: 1,
+    PUBLIC: 2,
+});

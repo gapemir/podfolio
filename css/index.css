@@ -16,65 +16,133 @@ body{
     background-color: #333;
 }
 
-#formDiv{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 20rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin: auto;
-    padding: 20px;
+.login-form {
+    width: 200px;
+    height: 300px;
+    input {
+        width: calc(100% - 10px);
+    }
+    button {
+        width: 100%;
+        background-color: rgb(83, 160, 255);
+
+        &.small {
+            align-self: end;
+            width: 60%;
+        }
+    }
 }
 
-#formDiv > div {
-    width: 100%;
+.login-page {
+    justify-content: start;
 }
-#formDiv > div > h3{
+
+.gn-header{
+    background-color: #333;
+    color: #fff;
     text-align: center;
+    line-height: 50px;
+    font-size: 1.5em;
+    font-weight: 300;
 }
 
-/* Input fields */
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-    width: 100%;
+#headerDummy {
+    flex-basis: 100px;
+    flex-grow: 1;
+}
+
+#headerUser{
+    flex-basis: 60px;
+    flex-grow: 0;
+}
+#headerUserUser {
+    cursor: pointer;
+}
+#userPopup {
+    background-color: #333;
+    width: 150px;
+    z-index: 99;
+    position: absolute;
+    right: 0;
+    top: 50px;
+}
+#userPopup > div {
+    font-size: 0.8em;
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+.fileList > div > .body {
+    max-width: 100%;
+}
+
+.fileTile{
+    border: 1px solid #000;
+    height: 350px;
+    flex-basis: 350px;
+    flex-grow: 1;
+    flex-shrink: 1;
+    border-radius: 5px;
+}
+.fileHead{
+    background-color: #202020;
     padding: 8px;
-    margin-bottom: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-/* Buttons */
-#regLogin, #regButton  {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-}
-
-#regSwitch1, #regSwitch2 {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 40%;
-    margin-top: 5px;
     text-align: center;
+    font-weight: bold;
+    /*display: grid;
+    grid-template-columns: [first] calc(100% - 16px) [end] 16px;*/
+    gap: 5px;
+    border-radius: 5px 5px 0 0;
+    height: calc(30px - 16px);
+    width: calc(100% - 16px);
 }
-#regSwitch1 {
-    margin-left: 60%;
+.fileHead > div{
+    flex-grow: 1;
+    min-width: 0;
+}
+.fileHead label{
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 100%;
+    text-overflow: ellipsis;
+}
+.fileHead span{
+    text-align: center;
+    cursor: pointer;
 }
 
-button:hover {
-    background-color: #0056b3;
+.fileHead i{
+    cursor: pointer;
+}
+
+.fileCont{
+    flex-grow: 1;
+    width: 100%;
+    height: 80%;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.fileCont img{
+    width: 100%;
+    object-fit: contain;
+    height: 100%;
+}
+.fileCont i{
+    font-size: 5em;
+    color: #fff;
+}
+.fakeTile{
+    border: 1px transparent;
+}
+
+.fileMenu{
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gn-note{
+    width: calc(100% - 10px);
+    height: calc(100% - 10px);
 }

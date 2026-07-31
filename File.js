@@ -187,7 +187,7 @@ class Folder extends gn.ui.tile.TileSubItemContainer{
         }
     }
     async _downloadZip(storeid, filename = "folder.zip"){
-        let data = await gn.app.App.instance().requestA("./php/folder/createZip.php", {
+        let data = await gn.app.App.requestA("./php/folder/createZip.php", {
             token: gn.app.App.instance().token,
             userid: gn.app.App.instance().userId,
             storeid: storeid
