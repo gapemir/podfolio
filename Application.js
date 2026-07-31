@@ -9,14 +9,14 @@ class Application extends gn.app.App {
         this.header = new Header();
     }
     get userId() {
-        let userId = gn.util.Cookie.get().podfolioUserid;
+        let userId = gn.io.Cookie.get().podfolioUserid;
         if( gn.lang.Var.isNull(userId) ){
             userId = new URL(window.location.href).searchParams.get("user");
         }
         return userId; 
     }
     get token() {
-        let token = gn.util.Cookie.get().podfolioToken;
+        let token = gn.io.Cookie.get().podfolioToken;
         return token 
     }
     get state() {
@@ -33,13 +33,9 @@ class Application extends gn.app.App {
         link.click();
         document.body.removeChild(link);
     }
-    writeToClipboard(text) {
-        navigator.clipboard.writeText(text);
-        //if debugger is opened and this throws error its expected behavior
-    }
     logout() {
-        gn.util.Cookie.del("podfolioToken");
-        gn.util.Cookie.del("podfolioUserid");
+        gn.io.Cookie.del("podfolioToken");
+        gn.io.Cookie.del("podfolioUserid");
         window.location.reload();
     }
     getLocalePath() {
@@ -63,8 +59,9 @@ class Header extends gn.ui.Header{
                 this._popup.addItem(new gn.ui.control.MenuItem("logout", new gn.ui.basic.Label(this.tr("LOGOUT")), new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]), function () {
                     gn.app.App.instance().logout();
                 }));
-                this._popup.addItem(new gn.ui.control.MenuItem("public_page", new gn.ui.basic.Label(this.tr("MY_PUBLIC_PAGE")), new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]), function () {
+                this._popup.addItem(new gn.ui.control.MenuItem("public_page", new gn.ui.basic.Label(this.tr("MY_PUBLIC_PAGE")), new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]), async function () {
                     // window.location.href = "./public.html?user=" + gn.app.App.instance().userId;
+                    console.log(await gn.io.Clipboard.readText());
                     alert("soon :)")
                 }));
             }

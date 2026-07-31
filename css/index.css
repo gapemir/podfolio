@@ -72,6 +72,9 @@ body{
     border: 1px solid black;
 }
 
+.fileTileFirst{
+    gap: 5px;
+}
 .fileList > div > .body {
     max-width: 100%;
 }

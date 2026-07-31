@@ -69,7 +69,7 @@ class File extends gn.ui.tile.TileItem{
             if(name.includes("%")){
                 name = this._data.storeid;
             }
-            Application.instance().writeToClipboard(link + "data/"+ gn.app.App.instance().userId +"/"+this._data.storeid+"?key="+this._data.fileKey);
+            gn.io.Clipboard.writeText(link + "data/"+ gn.app.App.instance().userId +"/"+this._data.storeid+"?key="+this._data.fileKey);
         }, this);
         this._head.add(share);
 
@@ -82,7 +82,7 @@ class File extends gn.ui.tile.TileItem{
         this._cont = new gn.ui.basic.Widget(null, "div", "fileCont");
         this.add(this._cont);
 
-        let contentItem = null;
+        this._contentItem = null;
         let mimetype = this._data.mimetype;
         const mimeIconMap = [
             { keys: ["image/"], icon: "fa-file-image" },
@@ -98,14 +98,14 @@ class File extends gn.ui.tile.TileItem{
 
         if (mimetype.includes("image/")) {
             let src = "./data/" + gn.app.App.instance().userId + "/" + this._data.storeid + "?key=" + this._data.fileKey;
-            contentItem = new gn.ui.basic.Image(src, "fileImage");
+            this._contentItem = new gn.ui.basic.Image(src, "fileImage");
         } 
         else if (mimetype.includes("gn-note/")) {
-            contentItem = new gn.ui.input.MultiLine();
-            contentItem.addClass("gn-note");
-            contentItem.value = this._data.content;
-            contentItem.addEventListener("input", function(e) {
-                this.sendEvent("noteChanged", { content: e.data, storeid: this._data.storeid });
+            this._contentItem = new gn.ui.input.MultiLine();
+            this._contentItem.addClass("gn-note");
+            this._contentItem.value = this._data.content;
+            this._contentItem.addEventListener("input", function(e) {
+                this.sendEvent("noteChanged", { content: this._contentItem.value, storeid: this._data.storeid });
             }, this);  
         } 
         else {
@@ -113,17 +113,17 @@ class File extends gn.ui.tile.TileItem{
             
             // Use the matched icon, or default to a generic file icon
             const iconName = match ? match.icon : "fa-file";
-            contentItem = new gn.ui.basic.Icon(70, iconName, ["fa-regular"]);
+            this._contentItem = new gn.ui.basic.Icon(70, iconName, ["fa-regular"]);
         }
-        this._cont.add(contentItem);
+        this._cont.add(this._contentItem);
 
         this._headText.addEventListener("click", function(){
             window.location.href = "./data/" + gn.app.App.instance().userId + "/" + this._data.storeid + "?key=" + this._data.fileKey;
         }.bind(this));
-        /*contentItem.onclick = function(){
+        /*this._contentItem.onclick = function(){
             window.location.href = "./data/" + userid + "/" + file.storeid + "?key=" + file.fileKey;
         };*/
-        contentItem.setStyle("cursor", "pointer"); 
+        this._contentItem.setStyle("cursor", "pointer"); 
     }
     updateItem(data, key){
         super.updateItem(data, key);
