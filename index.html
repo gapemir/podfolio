@@ -8,13 +8,18 @@
     <link rel="stylesheet" href="./css/index.css">
     <link rel="stylesheet" href="./gn/css/font-awesome/all.css">
     <script src="./gn/gn.js"></script>
-    <script src="./File.js"></script>
+    <script src="./pod.js"></script>
+    <!-- <script src="./File.js"></script>
     <script src="./privateFile.js"></script>
-    <script src="./Application.js"></script>
+    <script src="./Application.js"></script> -->
 </head>
 <body>
     <script src="testmainPanel.js"></script>
     <script>
+        const app = gn.app.App.startup( pod.App ); 
+        app.root.add(new pod.LoginWindow());
+        app.root.registerConstructable("mainWindow", pod.MainWindow);
+
         let wasLoggedIn = document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid') || cookie.includes('podfolioToken') ) !== undefined;
         if(wasLoggedIn) {
             let tmpuserid = document.cookie.split(';').find(cookie => cookie.includes('podfolioUserid')).split('=')[1];
@@ -30,7 +35,7 @@
                     console.log(data);
                     if (data.status === 1) {
                         console.log("user is verified");
-                        gn.app.App.instance().state = pod.appState.LOGGEDIN;
+                        gn.app.App.instance().state = pod.App.appState.LOGGEDIN;
                         gn.app.App.instance().root.activate("mainWindow")
                     }
                     else {
