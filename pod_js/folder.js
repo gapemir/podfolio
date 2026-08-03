@@ -95,7 +95,7 @@ namespace pod {
             }
         }
         async _downloadZip(storeid, filename = "folder.zip") {
-            let data = await gn.app.App.requestA("./php/folder/createZip.php", {
+            let data = await gn.io.Request.post("./php/folder/createZip.php", {
                 token: gn.app.App.instance().token,
                 userid: gn.app.App.instance().userId,
                 storeid: storeid
@@ -175,7 +175,7 @@ namespace pod {
             this.add(this._menu);
         }
         async _changeFolderMeta(storeid, data) {
-            let res_data = await gn.app.App.requestJ('./php/folder/changeMeta.php', {
+            let res_data = await gn.io.Request.post('./php/folder/changeMeta.php', {
                 storeid: storeid,
                 token: gn.app.App.instance().token,
                 userid: gn.app.App.instance().userId,
@@ -184,7 +184,7 @@ namespace pod {
             return res_data.status == 1;
         }
         async _deleteFolder(storeid) {
-            let data = await gn.app.App.requestJ('./php/folder/delete.php', {
+            let data = await gn.io.Request.post('./php/folder/delete.php', {
                 storeid: storeid,
                 token: gn.app.App.instance().token,
                 userid: gn.app.App.instance().userId,
@@ -197,7 +197,7 @@ namespace pod {
                 return this._body._children[0].value;
             }
             dlg.addEventListener("ok", async function(e){
-                let data = await gn.app.App.requestJ("./php/folder/rename.php", {
+                let data = await await gn.io.Request.post("./php/folder/rename.php", {
                     storeid: this._data.storeid,
                     newname: e.data,
                     token: gn.app.App.instance().token,

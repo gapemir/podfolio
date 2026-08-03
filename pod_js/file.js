@@ -190,7 +190,7 @@ namespace pod {
         }
         async _changeContentMeta(storeid, data) { 
             let res_data = null;
-            res_data = await gn.app.App.requestJ('./php/' + this._contentType() + '/changeMeta.php', {
+            res_data = await gn.io.Request.post("./php/" + this._contentType() + "/changeMeta.php", {
                 storeid: storeid,
                 token: gn.app.App.instance().token,
                 userid: gn.app.App.instance().userId,
@@ -201,7 +201,7 @@ namespace pod {
         async _deleteFile(e) {
             let dlg = gn.ui.popup.Popup.ConfirmationPopup(this.tr("DELETE"), this.tr("YOU_SURE_YOU_WANT_TO_DELETE_THIS_FILE"));
                 dlg.addEventListener("yes", async function(){
-                    let data = await gn.app.App.requestJ("./php/" + this._contentType() + "/delete.php", {
+                    let data = await gn.io.Request.post("./php/" + this._contentType() + "/delete.php", {
                         storeid: this._data.storeid,
                         token: gn.app.App.instance().token,
                         userid: gn.app.App.instance().userId
@@ -222,7 +222,7 @@ namespace pod {
             this._data.content = e.data.content;
         }
         async _saveNoteChanged() {
-            let data = await gn.app.App.requestJ('./php/note/change.php', {
+            let data = await await gn.io.Request.post('./php/note/change.php', {
                 storeid: this._data.storeid,
                 content: this._data.content,
                 token: gn.app.App.instance().token,
@@ -236,7 +236,7 @@ namespace pod {
                 return this._body._children[0].value;
             }
             dlg.addEventListener("ok", async function(e){
-                let data = await gn.app.App.requestJ("./php/"+this._contentType()+"/rename.php", {
+                let data = await await gn.io.Request.post("./php/"+this._contentType()+"/rename.php", {
                     storeid: this._data.storeid,
                     newname: e.data,
                     token: gn.app.App.instance().token,

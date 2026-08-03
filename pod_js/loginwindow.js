@@ -54,7 +54,7 @@ namespace pod {
                 console.log("data must not be empty");
                 return;
             }
-            let resp = await gn.app.App.requestJ("./php/user/login.php", body);
+            let resp = await await gn.io.Request.post("./php/user/login.php", body);
             if(resp.status == 1) { // alles gut
                 document.cookie = `podfolioUserid=${resp.userid}; path=/`;
                 document.cookie = `podfolioToken=${resp.token}; path=/`;
@@ -75,7 +75,7 @@ namespace pod {
                 console.log("data must not be empty");
                 return;
             }
-            let resp = await gn.app.App.requestJ("./php/user/register.php", body);
+            let resp = await await gn.io.Request.post("./php/user/register.php", body);
             if(resp.status == 1) { // alles gut
                 document.cookie = `podfolioUserid=${resp.userid}; path=/`;
                 document.cookie = `podfolioToken=${resp.token}; path=/`;
