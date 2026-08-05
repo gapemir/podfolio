@@ -1,10 +1,11 @@
 <?php
     require_once("../inc.php");
 
+    header("Content-Type: application/json; charset=UTF-8");
+
     $data = JSON_decode(file_get_contents("php://input"), true);
     $username = $data['username'];
     $password = $data['password'];
-
 
     $sql = "SELECT userid, password, token FROM user WHERE username = '$username' OR email = '$username'";
     $result = mysqli_query($conn, $sql);

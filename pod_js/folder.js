@@ -194,7 +194,7 @@ namespace pod {
         async _renameFolder(e) {
             let dlg = gn.ui.popup.Popup.InformationPopup(this.tr("RENAME_FOLDER"), new gn.ui.input.Line("", this.tr("NEW_NAME")));
             dlg.callback = function() {
-                return this._body._children[0].value;
+                return this.content.value;
             }
             dlg.addEventListener("ok", async function(e){
                 let data = await await gn.io.Request.post("./php/folder/rename.php", {

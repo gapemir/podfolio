@@ -2,6 +2,8 @@
 
     require_once("../inc.php");
 
+    header("Content-Type: application/json; charset=UTF-8");
+
     $userid = $_POST['userid'];
     $token = $_POST['token'];
     $parent = $_POST['parent'];

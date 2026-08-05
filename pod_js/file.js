@@ -233,7 +233,7 @@ namespace pod {
         async _rename(e) {
             let dlg = gn.ui.popup.Popup.InformationPopup(this.tr("RENAME"), new gn.ui.input.Line("", this.tr("NEW NAME")));
             dlg.callback = function(){
-                return this._body._children[0].value;
+                return this.content.value;
             }
             dlg.addEventListener("ok", async function(e){
                 let data = await await gn.io.Request.post("./php/"+this._contentType()+"/rename.php", {
