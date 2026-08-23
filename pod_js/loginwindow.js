@@ -12,47 +12,53 @@ namespace pod {
             this._stack = new gn.ui.container.Stack();
             this.add(this._stack);
 
-            let loginPage = new gn.ui.container.Column("login-page");
-            let loginForm = new gn.ui.container.Column("login-form", 5);
-            this._lusername = new gn.ui.input.Line("", "USERNAME_OR_EMAIL");
-            loginForm.add(this._lusername);
-            this._lpassword = new gn.ui.input.Password("", "PASSWORD");
-            loginForm.add(this._lpassword);
-            this._lloginB = new gn.ui.control.Button("LOGIN", "", this._login, this);
-            loginForm.add(this._lloginB);
-            this._lregisterB = new gn.ui.control.Button("REGISTER", "small", () => { this._stack.next(); }, this);
-            loginForm.add(this._lregisterB);
-            loginPage.add(loginForm);
-            this._stack.add(loginPage);
+            let wrap1 = new gn.ui.container.Column("login-page");
+            this._stack.add(wrap1);
 
-            let regPage = new gn.ui.container.Column();
-            let regForm = new gn.ui.container.Column("login-form", 5);
-            this._rusername = new gn.ui.input.Line("", "USERNAME");
-            regForm.add(this._rusername);
-            this._remail = new gn.ui.input.Line("", "EMAIL");
-            regForm.add(this._remail);
-            this._rpassword = new gn.ui.input.Password("", "PASSWORD");
-            regForm.add(this._rpassword);
-            this._rregisterB = new gn.ui.control.Button("REGISTER", "", this._register, this);
-            regForm.add(this._rregisterB);
-            this._rloginB = new gn.ui.control.Button("LOGIN", "small", () => { this._stack.next(); }, this);
-            regForm.add(this._rloginB);
-            regPage.add(regForm);
-            this._stack.add(regPage);
+            this._loginForm = new gn.ui.form.Form(null, 5);
+            wrap1.add(this._loginForm);
+            this._loginForm.addClass("login-form");
+            
+            this._loginForm.addElement("username", new gn.ui.input.Line("", "USERNAME_OR_EMAIL"), this.tr("USERNAME_OR_EMAIL"), false, true);
+            this._loginForm.addElement("password", new gn.ui.input.Password("", "PASSWORD"), this.tr("PASSWORD"), false, true);
 
+            this._loginForm.addElement("login", new gn.ui.control.Button("LOGIN"));
+            this._loginForm.addElement("register", new gn.ui.control.Button("REGISTER", "small"));
+
+            this._loginForm.elementAddEventListener("login", "click", this._login, this);
+            this._loginForm.elementAddEventListener("register", "click", () => { this._stack.next(); }, this);
+
+            let wrap2 = new gn.ui.container.Column("login-page");
+            this._stack.add(wrap2);
+
+            this._registerForm = new gn.ui.form.Form(null, 5);
+            wrap2.add(this._registerForm);
+            this._registerForm.addClass("login-form");
+            
+            this._registerForm.addElement("username", new gn.ui.input.Line("", "USERNAME"), this.tr("USERNAME"), false, true);
+            this._registerForm.addElement("email", new gn.ui.input.Line("", "EMAIL"), this.tr("EMAIL"), false, true);
+            this._registerForm.addElement("password", new gn.ui.input.Password("", "PASSWORD"), this.tr("PASSWORD"), false, true);
+
+            this._registerForm.addElement("register", new gn.ui.control.Button("REGISTER"));
+            this._registerForm.addElement("login", new gn.ui.control.Button("LOGIN", "small"));
+
+            this._registerForm.elementAddEventListener("register", "click", this._register, this);
+            this._registerForm.elementAddEventListener("login", "click", () => { this._stack.next(); }, this);            
         }
+
         onActivated() {
             gn.app.App.instance().header.exclude();
         }
 
         async _login() {
-            let body = {
-                username: this._lusername.value,
-                password: this._lpassword.value,
-            }
-            if(gn.lang.String.isEmpty(body.username) || gn.lang.String.isEmpty(body.password)) {
-                console.log("data must not be empty");
+            let ok = this._loginForm.checkRules();
+            if(!ok) {
                 return;
+            }
+            let data = this._loginForm.data();
+            let body = {
+                username: data.username,
+                password: data.password,
             }
             let resp = await await gn.io.Request.post("./php/user/login.php", body);
             if(resp.status == 1) { // alles gut
@@ -66,14 +72,15 @@ namespace pod {
         }
 
         async _register() {
-            let body = {
-                username: this._rusername.value,
-                email: this._remail.value,
-                password: this._rpassword.value,
-            }
-            if(gn.lang.String.isEmpty(body.username) || gn.lang.String.isEmpty(body.email) || gn.lang.String.isEmpty(body.password)) {
-                console.log("data must not be empty");
+            let ok = this._registerForm.checkRules();
+            if(ok == false){
                 return;
+            }
+            let data = this._registerForm.data();
+            let body = {
+                username: data.username,
+                email: data.email,
+                password: data.password,
             }
             let resp = await await gn.io.Request.post("./php/user/register.php", body);
             if(resp.status == 1) { // alles gut
@@ -81,7 +88,12 @@ namespace pod {
                 document.cookie = `podfolioToken=${resp.token}; path=/`;
                 gn.app.App.instance().root.activate("mainWindow");
             } else if(resp.status == -4) {
-                alert("username already exists");
+                let popup = gn.ui.popup.Popup.InformationPopup("ERROR", "USERNAME ALREADY EXISTS");
+                popup.show();
+                console.log("test");
+            }
+            else {
+                alert("an error acoured")
             }
         }
     }

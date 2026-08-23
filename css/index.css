@@ -19,16 +19,13 @@ body{
 .login-form {
     width: 200px;
     height: 300px;
-    input {
-        width: calc(100% - 10px);
-    }
     button {
         width: 100%;
         background-color: rgb(83, 160, 255);
 
         &.small {
             align-self: end;
-            width: 60%;
+            width: 60% !important;
         }
     }
 }

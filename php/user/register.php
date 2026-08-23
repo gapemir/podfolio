@@ -27,7 +27,7 @@
 
 
     if( !mkdir( "../../data/$encUsername") ){
-        echo JSON_encode(["status" => Ret::Other->value]);
+        echo JSON_encode(["status" => Ret::Other->value, "message" => "cant create directory"]);
         exit();
     }
 
@@ -36,6 +36,6 @@
     if( mysqli_execute_query($conn, $sql) ) {
         echo JSON_encode(["status" => Ret::Ok->value, "token" => $token, "userid" => $encUsername]);
     } else {
-        echo JSON_encode(["status" => Ret::Other->value]);
+        echo JSON_encode(["status" => Ret::Other->value, "message" => "could not insert into database, error=".mysqli_error($conn).""]);
     }
 ?>
