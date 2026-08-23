@@ -6,11 +6,7 @@ namespace pod {
             this.model = new gn.model.FilterSortTreeModel( new gn.model.TreeModel() );
             this.tileClass = pod.File;
             this.subItemContClass = pod.Folder;
-            
-            this.breadcrumb = new gn.ui.control.Breadcrumb();
-            this.breadcrumb.model = this._model;
             this.breadcrumb.topLevelName = this.tr("HOME");
-            this._header.add(this.breadcrumb);
 
             this._addFirst();
         }
