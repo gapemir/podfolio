@@ -11,7 +11,7 @@ namespace pod {
             let download = new gn.ui.basic.Icon(14, "fa-download", ["fa-solid"]);
             download.tooltip = this.tr("DOWNLOAD");
             download.addEventListener("click", function(){
-                Application.instance().downloadFile("./data/" + gn.app.App.instance().userId + "/" + this._data.storeid + "?key=" + this._data.fileKey, this._data.name);
+                gn.app.App.instance().downloadFile("./data/" + gn.app.App.instance().userId + "/" + this._data.storeid + "?key=" + this._data.fileKey, this._data.name);
             }, this);
             this._head.add(download);
             let share = new gn.ui.basic.Icon(14, "fa-share", ["fa-solid"]);
@@ -199,18 +199,18 @@ namespace pod {
             return res_data.status == 1;
         }
         async _deleteFile(e) {
-            let dlg = gn.ui.popup.Popup.ConfirmationPopup(this.tr("DELETE"), this.tr("YOU_SURE_YOU_WANT_TO_DELETE_THIS_FILE"));
-                dlg.addEventListener("yes", async function(){
-                    let data = await gn.io.Request.post("./php/" + this._contentType() + "/delete.php", {
-                        storeid: this._data.storeid,
-                        token: gn.app.App.instance().token,
-                        userid: gn.app.App.instance().userId
-                    });
-                    if(data.status == 1) {
-                        this.sendEvent("removeData", this._data.storeid);
-                    }    
-                }, this);
-            dlg.show();
+            let dlg = gn.ui.popup.Dialog.ConfirmationDialog(this.tr("DELETE"), this.tr("YOU_SURE_YOU_WANT_TO_DELETE_THIS_FILE"));
+            let ret = await dlg.exec();
+            if(ret == gn.ui.popup.Dialog.DialogCode.Accepted) {
+                let data = await gn.io.Request.post("./php/" + this._contentType() + "/delete.php", {
+                    storeid: this._data.storeid,
+                    token: gn.app.App.instance().token,
+                    userid: gn.app.App.instance().userId
+                });
+                if(data.status == 1) {
+                    this.sendEvent("removeData", this._data.storeid);
+                }    
+            }
         }
         async _noteChanged(e) {
             if(!this._changeTimer) {
@@ -222,7 +222,7 @@ namespace pod {
             this._data.content = e.data.content;
         }
         async _saveNoteChanged() {
-            let data = await await gn.io.Request.post('./php/note/change.php', {
+            let data = await gn.io.Request.post('./php/note/change.php', {
                 storeid: this._data.storeid,
                 content: this._data.content,
                 token: gn.app.App.instance().token,
@@ -231,22 +231,19 @@ namespace pod {
             return data.status == 1;
         }
         async _rename(e) {
-            let dlg = gn.ui.popup.Popup.InformationPopup(this.tr("RENAME"), new gn.ui.input.Line("", this.tr("NEW NAME")));
-            dlg.callback = function(){
-                return this.content.value;
-            }
-            dlg.addEventListener("ok", async function(e){
-                let data = await await gn.io.Request.post("./php/"+this._contentType()+"/rename.php", {
+            let dlg = gn.ui.popup.Dialog.InformationDialog(this.tr("RENAME"), new gn.ui.input.Line("", this.tr("NEW NAME")));
+            let ret = await dlg.exec();
+            if(ret == gn.ui.popup.Dialog.DialogCode.Accepted) {
+                let data = await gn.io.Request.post("./php/"+this._contentType()+"/rename.php", {
                     storeid: this._data.storeid,
-                    newname: e.data,
+                    newname: dlg.content.value,
                     token: gn.app.App.instance().token,
                     userid: gn.app.App.instance().userId
                     });
                 if(data.status == 1){
-                    this.sendEvent("changeData", {index: this._data.storeid, key: "name", value: data.name || e.data})
+                    this.sendEvent("changeData", {index: this._data.storeid, key: "name", value: dlg.content.value})
                 }
-            }, this);
-            dlg.show();
+            }
         }
     }
 }

@@ -126,7 +126,7 @@ namespace pod {
                         data.file.storeid = data.file.storeid;
                         data.file.type = gn.model.Model.Type.item;
                         this.model.insertRow(data.file, this.model.rowCount(), data.file.parent );
-                        gn.ui.popup.Popup.InformationPopup(this.tr("FILE_SUCCESSFULLY_UPLOADED")).show();
+                        gn.ui.popup.Dialog.InformationDialog(this.tr("FILE_SUCCESSFULLY_UPLOADED")).exec();
                     }
                 } else {
                     alert('File upload failed');
@@ -139,7 +139,7 @@ namespace pod {
                 alert("Folder name cannot be empty");
                 return;
             }
-            let resp = await await gn.io.Request.post("./php/folder/create.php", {
+            let resp = await gn.io.Request.post("./php/folder/create.php", {
                 token: gn.app.App.instance().token,
                 userid: gn.app.App.instance().userId,
                 name: folderName,
@@ -154,7 +154,7 @@ namespace pod {
             }
         }
         async _createNewNote() {
-            let resp = await await gn.io.Request.post("./php/note/create.php", {
+            let resp = await gn.io.Request.post("./php/note/create.php", {
                 token: gn.app.App.instance().token,
                 userid: gn.app.App.instance().userId,
                 parent : this._currentGroup

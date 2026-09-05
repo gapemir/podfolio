@@ -60,10 +60,10 @@ namespace pod {
                 username: data.username,
                 password: data.password,
             }
-            let resp = await await gn.io.Request.post("./php/user/login.php", body);
+            let resp = await gn.io.Request.post("./php/user/login.php", body);
             if(resp.status == 1) { // alles gut
-                document.cookie = `podfolioUserid=${resp.userid}; path=/`;
-                document.cookie = `podfolioToken=${resp.token}; path=/`;
+                gn.io.Cookie.set("podfolioUserid", resp.userid);
+                gn.io.Cookie.set("podfolioToken", resp.token);
                 gn.app.App.instance().state = pod.App.appState.LOGGEDIN;
                 gn.app.App.instance().root.activate("mainWindow");
             } else if(resp.status == -2) {
@@ -82,13 +82,13 @@ namespace pod {
                 email: data.email,
                 password: data.password,
             }
-            let resp = await await gn.io.Request.post("./php/user/register.php", body);
+            let resp = await gn.io.Request.post("./php/user/register.php", body);
             if(resp.status == 1) { // alles gut
-                document.cookie = `podfolioUserid=${resp.userid}; path=/`;
-                document.cookie = `podfolioToken=${resp.token}; path=/`;
+                gn.io.Cookie.set("podfolioUserid", resp.userid);
+                gn.io.Cookie.set("podfolioToken", resp.token);
                 gn.app.App.instance().root.activate("mainWindow");
             } else if(resp.status == -4) {
-                let popup = gn.ui.popup.Popup.InformationPopup("ERROR", "USERNAME ALREADY EXISTS");
+                let popup = gn.ui.popup.Dialog.InformationDialog("ERROR", "USERNAME ALREADY EXISTS");
                 popup.show();
                 console.log("test");
             }

@@ -6,19 +6,25 @@ namespace pod {
             this.sticky = true;
             this.left.add(new gn.ui.basic.Label(this.tr("PODFOLIO")));
             this.center.add(new gn.ui.basic.Label(this.tr("YOUR_PERSONAL_PASTEBIN")));
+            let notif = new gn.ui.basic.Icon(30, "fa-message", ["fa-solid"]);
+            this.right.add(notif);
+            this.right.layoutManager.gap = 10;
             let user = new gn.ui.basic.Icon(30, "fa-user", ["fa-solid"])
             user.addEventListener("click", function () {
                 if( gn.lang.Var.isNull(this._popup) ){
-                    this._popup = new gn.ui.control.Menu(user);
-                    this._popup.setStyle("padding", "5px");
-                    this._popup.addItem(new gn.ui.control.MenuItem("logout", new gn.ui.basic.Label(this.tr("LOGOUT")), new gn.ui.basic.Icon(20, "fa-right-from-bracket", ["fa-solid"]), function () {
+                    this._popup = new gn.ui.control.Menu(user, true);
+                    this._logoutAction = new gn.core.Action("logout", this.tr("LOGOUT"));
+                    this._logoutAction.icon = new gn.ui.basic.Icon(15, "fa-right-from-bracket", ["fa-solid"])
+                    this._logoutAction.addEventListener( "triggered", function(){
                         gn.app.App.instance().logout();
-                    }));
-                    this._popup.addItem(new gn.ui.control.MenuItem("public_page", new gn.ui.basic.Label(this.tr("MY_PUBLIC_PAGE")), new gn.ui.basic.Icon(20, "fa-user", ["fa-solid"]), async function () {
-                        // window.location.href = "./public.html?user=" + gn.app.App.instance().userId;
-                        console.log(await gn.io.Clipboard.readText());
-                        alert("soon :)")
-                    }));
+                    }, this );
+
+                    this._publicAction = new gn.core.Action("public_page", this.tr("MY_PUBLIC_PAGE"));
+                    this._publicAction.icon = new gn.ui.basic.Icon(15, "fa-user", ["fa-solid"]);
+                    this._publicAction.addEventListener( "triggered", function(){
+                        alert("soon");
+                    }, this );
+                    this._popup.actions = [ this._logoutAction, this._publicAction ];
                 }
                 this._popup.show(); 
             }, this);

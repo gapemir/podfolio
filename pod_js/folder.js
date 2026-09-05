@@ -158,16 +158,16 @@ namespace pod {
 
             let del = new gn.ui.control.Button(this.tr("DELETE"), "fileMenuButton");
             del.addEventListener("click", async function() {
-                let dlg = gn.ui.popup.Popup.ConfirmationPopup(this.tr("DELETE_FOLDER"), this.tr("ARE_YOU_SURE_DELETE_FOLDER"));
-                dlg.addEventListener("yes", async function(){
+                let dlg = gn.ui.popup.Dialog.ConfirmationDialog(this.tr("DELETE_FOLDER"), this.tr("ARE_YOU_SURE_DELETE_FOLDER"));
+                let ret = await dlg.exec();
+                if(ret == gn.ui.popup.Dialog.DialogCode.Accepted) {
                     let res = await this._deleteFolder(this._data.storeid);
                     if(res) {
                         this.sendEvent("removeData", this._data.storeid);
                     } else {
                         console.error("Error deleting folder");
                     }
-                }, this);
-                dlg.show();
+                }
             }, this);
             del.setStyle("grid-column", "1 / span 2");
             this._menu.add(del);
@@ -192,22 +192,19 @@ namespace pod {
             return data.status == 1;
         }
         async _renameFolder(e) {
-            let dlg = gn.ui.popup.Popup.InformationPopup(this.tr("RENAME_FOLDER"), new gn.ui.input.Line("", this.tr("NEW_NAME")));
-            dlg.callback = function() {
-                return this.content.value;
-            }
-            dlg.addEventListener("ok", async function(e){
-                let data = await await gn.io.Request.post("./php/folder/rename.php", {
+            let dlg = gn.ui.popup.Dialog.InformationDialog(this.tr("RENAME_FOLDER"), new gn.ui.input.Line("", this.tr("NEW_NAME")));
+            let ret = await dlg.exec();
+            if(ret == gn.ui.popup.Dialog.DialogCode.Accepted) {
+                let data = await gn.io.Request.post("./php/folder/rename.php", {
                     storeid: this._data.storeid,
-                    newname: e.data,
+                    newname: dlg.content.value,
                     token: gn.app.App.instance().token,
                     userid: gn.app.App.instance().userId,
                 });
                 if(data.status == 1) {
-                    this.sendEvent("changeData", {index: this._data.storeid, key: "name", value: e.data});
+                    this.sendEvent("changeData", {index: this._data.storeid, key: "name", value: dlg.content.value});
                 }
-            }, this);
-            dlg.show();
+            }
         }
     }
 }
